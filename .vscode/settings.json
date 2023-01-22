@@ -87,5 +87,10 @@
 	},
 	"files.autoSave": "afterDelay",
 	"editor.stickyScroll.enabled": true,
-	"cSpell.words": ["trpc"]
+  "cSpell.words": [
+    "trpc"
+  ],
+  "[properties]": {
+    "editor.defaultFormatter": "foxundermoon.shell-format"
+  }
 }
