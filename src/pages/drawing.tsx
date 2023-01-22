@@ -1,8 +1,4 @@
-import * as React from "react";
 import { Stage, Text } from "react-pixi-fiber";
-import RotatingBunny from "./RotatingBunny";
-
-
 const width = window.innerWidth * 0.8;
 const height = window.innerHeight * 0.8;
 const options = {
@@ -16,13 +12,9 @@ const style = {
   height: height
 };
 
-function PixiApp() {
+export default function Drawing () {
   return (
-    <Stage options={options} style={style}>
+   <Stage options={options} style={style}>
       <Text x={100} y={100} text={JSON.stringify(window.innerWidth)} />
-      <RotatingBunny position="50,50" />
-    </Stage>
-  );
+    </Stage>)
 }
-
-export default PixiApp;
