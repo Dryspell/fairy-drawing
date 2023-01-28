@@ -2,8 +2,6 @@ import { type NextPage } from "next";
 import Head from "next/head";
 
 import { api } from "../utils/api";
-import { Rectangle } from "../components/Rectangle";
-import { Stage } from "@inlet/react-pixi";
 
 const Home: NextPage = () => {
   const hello = api.example.hello.useQuery({ text: "from tRPC" });
@@ -16,17 +14,7 @@ const Home: NextPage = () => {
         <link rel="icon" href="/favicon.ico" />
       </Head>
       <main className="flex min-h-screen flex-col items-center justify-center bg-gradient-to-b from-[#2e026d] to-[#15162c]">
-        <div className="container flex flex-col items-center justify-center gap-12 px-4 py-16 ">
-          <Stage>
-            <Rectangle
-              x={100}
-              y={100}
-              width={100}
-              height={100}
-              color={0xff0000}
-            />
-          </Stage>
-        </div>
+        <div className="container flex flex-col items-center justify-center gap-12 px-4 py-16 "></div>
       </main>
     </>
   );
