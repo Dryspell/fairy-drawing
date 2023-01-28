@@ -1,5 +1,6 @@
 import React from "react";
 import { useFrameTime } from "../../lib/useFrameTime";
+import styles from "./Stopwatch.module.css";
 
 const leftPad = (value: string, length: number) => {
   while (value.length < length) {
@@ -17,7 +18,7 @@ export const formatTimer = (durationMs: number) => {
 
 const Timer = () => {
   const [startTime, setStartTime] = React.useState(0);
-  const [pause, setPause] = React.useState({ paused: false, pauseTime: 0 });
+  const [pause, setPause] = React.useState({ paused: true, pauseTime: 0 });
   const frameTime = useFrameTime();
 
   const displayTime = pause.paused ? pause.pauseTime : frameTime - startTime;
@@ -32,11 +33,13 @@ const Timer = () => {
   };
 
   return (
-    <div className="timer">
-      <div>{formatTimer(displayTime)}</div>
-      <button onClick={pause.paused ? play : pauseTime}>
-        {pause.paused ? "Play" : "Pause"}
-      </button>
+    <div className={styles.body}>
+      <div className={styles.timer}>
+        <div>{formatTimer(displayTime)}</div>
+        <button onClick={pause.paused ? play : pauseTime}>
+          {pause.paused ? "Play" : "Pause"}
+        </button>
+      </div>
     </div>
   );
 };

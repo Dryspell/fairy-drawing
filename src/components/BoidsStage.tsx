@@ -1,6 +1,6 @@
 import Konva from "konva";
 import React, { useEffect } from "react";
-import { Stage, Layer, Rect, Text, Shape, Wedge } from "react-konva";
+import { Stage, Layer, Wedge } from "react-konva";
 import { useFrameTime } from "../../lib/useFrameTime";
 
 type Boid = {
@@ -19,7 +19,7 @@ const computeDirection = (direction: number, boid?: Boid) => {
   return rotation;
 };
 
-const Boid = (props: any) => {
+const Boid = () => {
   console.log("Boid Rendered");
 
   // const frameTime = useFrameTime();
@@ -64,7 +64,7 @@ const Boid = (props: any) => {
   );
 };
 
-function BoidsStage(props: any) {
+function BoidsStage() {
   console.log("KonvaCanvas Rendered");
 
   return (

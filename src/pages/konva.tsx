@@ -5,6 +5,6 @@ const KonvaNoSSR = dynamic(() => import("../components/KonvaTest"), {
   ssr: false,
 });
 
-export default function TestsPage(props: any) {
+export default function TestsPage() {
   return <KonvaNoSSR />;
 }
