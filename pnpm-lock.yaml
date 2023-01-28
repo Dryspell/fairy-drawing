@@ -17,6 +17,7 @@ specifiers:
   autoprefixer: ^10.4.7
   eslint: ^8.30.0
   eslint-config-next: 13.1.2
+  konva: ^8.4.2
   next: 13.1.2
   next-auth: ^4.18.7
   postcss: ^8.4.14
@@ -39,6 +40,7 @@ dependencies:
   '@trpc/next': 10.9.0_agcdofckp5bsojf5gpkxjg6zzq
   '@trpc/react-query': 10.9.0_22wgxldzdfxutowffn2dykkd3i
   '@trpc/server': 10.9.0
+  konva: 8.4.2
   next: 13.1.2_biqbaboplfbrettd7655fr4n2y
   next-auth: 4.19.0_7jnwqgtpcnwg4nzft4b6xlzlfi
   react: 18.2.0

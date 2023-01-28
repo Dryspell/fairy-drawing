@@ -1,9 +1,10 @@
+import React from "react";
 import dynamic from "next/dynamic";
 
-const NoSSRComponent = dynamic(() => import("../components/KonvaTest"), {
+const KonvaNoSSR = dynamic(() => import("../components/KonvaTest"), {
   ssr: false,
 });
 
 export default function TestsPage(props: any) {
-  return <NoSSRComponent />;
+  return <KonvaNoSSR />;
 }
