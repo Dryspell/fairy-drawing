@@ -10,6 +10,7 @@ import {
 } from "../../lib/utils";
 import { faker } from "@faker-js/faker";
 import Konva from "konva";
+import math from "mathjs";
 
 export const TARGET_COLLISION_DISTANCE = 20;
 export const EDGE_PADDING = 50;
@@ -66,10 +67,10 @@ export const SummaryText = (props: { boidState: Boid }) => {
   const { boidState } = props;
 
   const summary = [
-    // `direction: ${boid.direction.toFixed(0)}`,
-    // `angleToTarget:${boid.angleToTarget}`,
-    // `cos:${cosDeg(boid.direction).toFixed(2)}`,
-    // `sin:${sinDeg(boid.direction).toFixed(2)}`,
+    `direction: ${boidState.direction.toFixed(0)}`,
+    `angleToTarget:${boidState.angleToTarget}`,
+    // `cos:${cosDeg(boidState.direction).toFixed(2)}`,
+    // `sin:${sinDeg(boidState.direction).toFixed(2)}`,
     `name: ${boidState.name}`,
     `score: ${boidState.score}`,
   ].join("\n");
@@ -77,21 +78,109 @@ export const SummaryText = (props: { boidState: Boid }) => {
   return <Text text={summary} x={boidState.x + 20} y={boidState.y + 20} />;
 };
 
+const ShortestDistanceLines = (props: { boidState: Boid }) => {
+  const { boidState } = props;
+  const wallWidth = window.innerWidth || 1000;
+  const wallHeight = window.innerHeight || 1000;
+
+  const corners = [
+    [0, 0],
+    [wallWidth, 0],
+    [wallWidth, wallHeight],
+    [0, wallHeight],
+  ];
+
+  const walls = [
+    [corners[0], corners[1]],
+    [corners[1], corners[2]],
+    [corners[2], corners[3]],
+    [corners[3], corners[0]],
+  ];
+
+  const wallPoint = walls
+    .map((wall) => {
+      if (
+        wall === undefined ||
+        wall[0] === undefined ||
+        wall[1] === undefined ||
+        wall[1][0] === undefined ||
+        wall[1][1] === undefined ||
+        wall[0][0] === undefined ||
+        wall[0][1] === undefined
+      )
+        return { x: boidState.x, y: boidState.y, distance: 0 };
+
+      const A1 = wall[0][1] - wall[1][1];
+      const B1 = wall[1][0] - wall[0][0];
+      const C1 = A1 * wall[0][0] + B1 * wall[0][1];
+
+      const A2 = -sinDeg(boidState.angleToTarget);
+      const B2 = cosDeg(boidState.angleToTarget);
+      const C2 = A2 * boidState.x + B2 * boidState.y;
+
+      const det = A1 * B2 - A2 * B1;
+      if (det === 0) {
+        return { x: boidState.x, y: boidState.y, distance: 0 };
+      }
+      const x = (B2 * C1 - B1 * C2) / det;
+      const y = (A1 * C2 - A2 * C1) / det;
+
+      if (x < 0 || x > wallWidth || y < 0 || y > wallHeight) {
+        return { x: boidState.x, y: boidState.y, distance: 0 };
+      }
+
+      const distance = distance2(boidState.x, boidState.y, x, y);
+
+      return { x, y, distance };
+    })
+    .filter((point) => point.distance && point.distance > 0)
+    .sort((a, b) => a.distance - b.distance)[0];
+
+  const torusPoint = wallPoint && {
+    x: wallHeight - wallPoint.y,
+    y: wallWidth - wallPoint.x,
+  };
+
+  console.log({ wallPoint, torusPoint });
+
+  return (
+    <>
+      {wallPoint && (
+        <Line
+          points={[boidState.x, boidState.y, wallPoint.x, wallPoint.y]}
+          stroke={"red"}
+          strokeWidth={2}
+        />
+      )}
+      {torusPoint && (
+        <Line
+          points={[
+            boidState.target.x,
+            boidState.target.y,
+            torusPoint.x,
+            torusPoint.y,
+          ]}
+          stroke={"green"}
+          strokeWidth={2}
+        />
+      )}
+      {/* {corners.map((corner, index) => (
+        <Line
+          key={index}
+          points={[boidState.x, boidState.y, corner[0] || 0, corner[1] || 0]}
+          stroke={boidState.color}
+          strokeWidth={2}
+        />
+      ))} */}
+    </>
+  );
+};
+
 export const HelperLines = (props: { boidState: Boid }) => {
   const { boidState } = props;
   return (
     <>
-      {/* <Line
-        points={[
-          boidState.x,
-          boidState.y,
-          boidState.x + cosDeg(boidState.direction) * 40,
-          boidState.y + sinDeg(boidState.direction) * 40,
-        ]}
-        stroke={boidState.color}
-        strokeWidth={2}
-      /> */}
-      {/* <Line
+      <Line
         points={[
           boidState.x,
           boidState.y,
@@ -100,17 +189,8 @@ export const HelperLines = (props: { boidState: Boid }) => {
         ]}
         stroke={boidState.color}
         strokeWidth={2}
-      /> */}
-      <Line
-        points={[
-          boidState.x,
-          boidState.y,
-          boidState.x + cosDeg(boidState.angleToTarget) * 40,
-          boidState.y + sinDeg(boidState.angleToTarget) * 40,
-        ]}
-        stroke={boidState.color}
-        strokeWidth={2}
       />
+      {/* <ShortestDistanceLines boidState={boidState} /> */}
     </>
   );
 };
@@ -128,15 +208,21 @@ export const BoidTarget = (props: { x: number; y: number; color: string }) => {
 };
 
 export const updateBoidState = (boidState: Boid, delta: number) => {
-  const angleToTarget = radToDeg(
-    Math.atan2(
-      boidState.target.y - boidState.y,
-      boidState.target.x - boidState.x
-    )
-  );
+  const dX = Math.abs(boidState.target.x - boidState.x);
+  const dY = Math.abs(boidState.target.y - boidState.y);
+
+  const angleToTarget =
+    (radToDeg(
+      Math.atan2(
+        boidState.target.y - boidState.y,
+        boidState.target.x - boidState.x
+      )
+    ) +
+      360) %
+    360;
 
   const direction =
-    lerp(boidState.direction, angleToTarget, 0.01 * (delta / msPerFrame)) % 180;
+    lerp(boidState.direction, angleToTarget, 0.01 * (delta / msPerFrame)) % 360;
 
   const x =
     boidState.x <= window.innerWidth - EDGE_PADDING &&
@@ -157,10 +243,7 @@ export const updateBoidState = (boidState: Boid, delta: number) => {
   const target = boidState.target;
   let score = boidState.score;
 
-  if (
-    distance2(x, y, boidState.target.x, boidState.target.y) <
-    TARGET_COLLISION_DISTANCE ** 2
-  ) {
+  if (dX ** 2 + dY ** 2 < TARGET_COLLISION_DISTANCE ** 2) {
     target.x =
       Math.random() * (window.innerWidth - 3 * EDGE_PADDING) +
       1.5 * EDGE_PADDING;

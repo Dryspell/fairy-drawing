@@ -8,7 +8,7 @@ function BoidsStage() {
   return (
     <Stage width={window.innerWidth} height={window.innerHeight}>
       <Layer>
-        <Flock count={10} />
+        <Flock count={1} />
       </Layer>
     </Stage>
   );
