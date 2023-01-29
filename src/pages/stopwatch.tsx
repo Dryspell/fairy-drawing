@@ -5,6 +5,7 @@ import Head from "next/head";
 const StopwatchNoSSR = dynamic(() => import("../components/Stopwatch"), {
   ssr: false,
 });
+// https://medium.com/projector-hq/writing-a-run-loop-in-javascript-react-9605f74174b
 
 export default function StopwatchPage() {
   return (

@@ -142,8 +142,12 @@ const Boid = (props: { frameTime?: number }) => {
     wedgeAngle: 40,
     color: Konva.Util.getRandomColor(),
     target: {
-      x: Math.random() * (window.innerWidth - EDGE_PADDING) + EDGE_PADDING,
-      y: Math.random() * (window.innerHeight - EDGE_PADDING) + EDGE_PADDING,
+      x:
+        Math.random() * (window.innerWidth - 3 * EDGE_PADDING) +
+        1.5 * EDGE_PADDING,
+      y:
+        Math.random() * (window.innerHeight - 3 * EDGE_PADDING) +
+        1.5 * EDGE_PADDING,
     },
     angleToTarget: 0,
     score: 0,
@@ -198,9 +202,11 @@ const Boid = (props: { frameTime?: number }) => {
       TARGET_COLLISION_DISTANCE ** 2
     ) {
       target.x =
-        Math.random() * (window.innerWidth - EDGE_PADDING) + EDGE_PADDING;
+        Math.random() * (window.innerWidth - 3 * EDGE_PADDING) +
+        1.5 * EDGE_PADDING;
       target.y =
-        Math.random() * (window.innerHeight - EDGE_PADDING) + EDGE_PADDING;
+        Math.random() * (window.innerHeight - 3 * EDGE_PADDING) +
+        1.5 * EDGE_PADDING;
       score = score + 1;
     }
 
