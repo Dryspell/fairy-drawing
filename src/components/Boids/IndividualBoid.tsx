@@ -1,4 +1,4 @@
-import { useFrameTime } from "../../lib/useFrameTime";
+import { useFrameTime } from "../../../lib/useFrameTime";
 import React, { useEffect } from "react";
 import { Boid, initialBoidState, updateBoidState } from "./Boid";
 import Konva from "konva";

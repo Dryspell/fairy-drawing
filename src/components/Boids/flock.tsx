@@ -1,6 +1,6 @@
 import React, { useEffect } from "react";
 import { Boid, initialBoidState, updateBoidState } from "./Boid";
-import { useFrameTime } from "../../lib/useFrameTime";
+import { useFrameTime } from "../../../lib/useFrameTime";
 
 export const Flock = (props: {
   count: number;

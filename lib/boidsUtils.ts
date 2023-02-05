@@ -1,4 +1,4 @@
-import type { Boid } from "../src/components/Boid";
+import type { Boid } from "../src/components/Boids/Boid";
 
 export const computeRotation = (direction: number, boid?: Boid) => {
   // 0 is east, 90 is south, 180 is west, 270 is north

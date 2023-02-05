@@ -6,7 +6,7 @@ import {
   msPerFrame,
   radToDeg,
   sinDeg,
-} from "../../lib/utils";
+} from "../../../lib/boidsUtils";
 import { faker } from "@faker-js/faker";
 import Konva from "konva";
 
