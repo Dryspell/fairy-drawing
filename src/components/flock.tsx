@@ -2,9 +2,23 @@ import React, { useEffect } from "react";
 import { Boid, initialBoidState, updateBoidState } from "./Boid";
 import { useFrameTime } from "../../lib/useFrameTime";
 
-export const Flock = (props: { count: number }) => {
+export const Flock = (props: {
+  count: number;
+  delta: number;
+  behavior: string;
+  helperOptions?: {
+    targetLines: boolean;
+    shortestDistanceLines: boolean;
+    targetVisible: boolean;
+  };
+  textOptions?: {
+    showText: boolean;
+  };
+}) => {
   const [boids, setBoids] = React.useState<Boid[]>(
-    [...Array(props.count).keys()].map((index) => initialBoidState())
+    [...Array(props.count).keys()].map((index) =>
+      initialBoidState(props.behavior)
+    )
   );
 
   const frameTime = useFrameTime();

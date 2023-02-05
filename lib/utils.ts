@@ -2,7 +2,7 @@ import type { Boid } from "../src/components/Boid";
 
 export const computeRotation = (direction: number, boid?: Boid) => {
   // 0 is east, 90 is south, 180 is west, 270 is north
-  const rotation = (direction % 360) + 180 - (boid?.wedgeAngle || 40) / 2;
+  const rotation = direction - (boid?.wedgeAngle || 40) / 2 + 180;
   return rotation;
 };
 

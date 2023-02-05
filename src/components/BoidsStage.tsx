@@ -8,7 +8,7 @@ function BoidsStage() {
   return (
     <Stage width={window.innerWidth} height={window.innerHeight}>
       <Layer>
-        <Flock count={1} />
+        <Flock count={10} delta={1} behavior={"seekTarget"} />
       </Layer>
     </Stage>
   );
