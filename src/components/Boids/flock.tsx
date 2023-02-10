@@ -1,6 +1,7 @@
 import React, { useEffect } from "react";
-import { Boid, initialBoidState, updateBoidState } from "./Boid";
+import { Boid } from "./Boid";
 import { useFrameTime } from "../../../lib/useFrameTime";
+import { initialBoidState, updateBoidState } from "../../../lib/boidState";
 
 export const Flock = (props: {
   count: number;
@@ -33,7 +34,7 @@ export const Flock = (props: {
 
   useEffect(() => {
     setFrames({ last: frames.current, current: frameTime });
-  }, [frameTime]);
+  }, [frameTime, frames]);
 
   useEffect(() => {
     const delta = frames.current - frames.last;
@@ -42,7 +43,7 @@ export const Flock = (props: {
       return updateBoidState(boid, delta, props.boundaries);
     });
     setBoids(newBoids);
-  }, [frames]);
+  }, [frames, boids, props.boundaries]);
 
   return (
     <>

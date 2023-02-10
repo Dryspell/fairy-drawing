@@ -1,7 +1,7 @@
 import React from "react";
 import dynamic from "next/dynamic";
 import Head from "next/head";
-import { BoidsStageProps } from "../components/Boids/BoidsStage";
+import type { BoidsStageProps } from "../components/Boids/BoidsStage";
 
 export const BoidsNoSSR = dynamic<BoidsStageProps>(
   import("../components/Boids/BoidsStage"),

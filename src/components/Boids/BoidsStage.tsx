@@ -1,4 +1,4 @@
-import React, { LegacyRef, useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Stage, Layer } from "react-konva";
 import { Flock } from "./flock";
 
@@ -9,8 +9,10 @@ export type BoidsStageProps = {
 };
 
 function BoidsStage(props: BoidsStageProps) {
-  const width = props.width || window.innerWidth;
-  const height = props.height || window.innerHeight;
+  const [width, setWidth] = useState<number>(props.width || window.innerWidth);
+  const [height, setHeight] = useState<number>(
+    props.height || window.innerHeight
+  );
   const { flock } = props;
 
   console.log("KonvaCanvas Rendered");
@@ -37,9 +39,16 @@ function BoidsStage(props: BoidsStageProps) {
     setStageY(y);
   };
 
+  const getStageDimensions = () => {
+    if (stageRef.current === null) return;
+    setWidth(stageRef.current.offsetWidth);
+    setHeight(stageRef.current.offsetHeight);
+  };
+
   // Get the position of the red box in the beginning
   useEffect(() => {
     getPosition();
+    getStageDimensions();
   }, []);
 
   // Re-calculate X and Y of the red box when the window is resized by the user
