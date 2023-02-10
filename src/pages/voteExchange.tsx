@@ -4,6 +4,13 @@ import ChatBox from "../components/Chat/ChatBox";
 import { BsChatLeftText } from "react-icons/bs";
 import { FiSettings } from "react-icons/fi";
 import { GoGraph } from "react-icons/go";
+import { BoidsNoSSR } from "./boids";
+import React, {
+  MutableRefObject,
+  ReactComponentElement,
+  useEffect,
+  useState,
+} from "react";
 
 const PRIMARY_COL_HEIGHT = 500;
 
@@ -19,7 +26,12 @@ export default function VoteExchange() {
         <h1>VoteExchange</h1>
         <Grid className={"p-6"}>
           <Grid.Col span={6}>
-            <Skeleton height={PRIMARY_COL_HEIGHT} radius="md" />
+            {/* <Skeleton height={PRIMARY_COL_HEIGHT} radius="md" /> */}
+            <BoidsNoSSR
+              width={500}
+              height={500}
+              flock={{ count: 10, delta: 1, behavior: "seekTarget" }}
+            />
             <Button fullWidth variant="outline" className={"mt-4"}>
               Vote
             </Button>

@@ -14,10 +14,12 @@ export const Flock = (props: {
   textOptions?: {
     showText: boolean;
   };
+  boundaries: { x0: number; x1: number; y0: number; y1: number };
+  frames: { last: number; current: number };
 }) => {
   const [boids, setBoids] = React.useState<Boid[]>(
     [...Array(props.count).keys()].map((index) =>
-      initialBoidState(props.behavior)
+      initialBoidState(props.boundaries, props.behavior)
     )
   );
 
@@ -37,7 +39,7 @@ export const Flock = (props: {
     const delta = frames.current - frames.last;
     // console.log({ delta });
     const newBoids = boids.map((boid) => {
-      return updateBoidState(boid, delta);
+      return updateBoidState(boid, delta, props.boundaries);
     });
     setBoids(newBoids);
   }, [frames]);

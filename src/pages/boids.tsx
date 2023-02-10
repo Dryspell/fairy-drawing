@@ -1,10 +1,15 @@
 import React from "react";
 import dynamic from "next/dynamic";
 import Head from "next/head";
+import { BoidsStageProps } from "../components/Boids/BoidsStage";
 
-const BoidsNoSSR = dynamic(() => import("../components/Boids/BoidsStage"), {
-  ssr: false,
-});
+export const BoidsNoSSR = dynamic<BoidsStageProps>(
+  import("../components/Boids/BoidsStage"),
+  {
+    loading: () => <p>Loading...</p>,
+    ssr: false,
+  }
+);
 
 export default function BoidsPage() {
   return (
@@ -14,7 +19,7 @@ export default function BoidsPage() {
         <meta name="description" content="Boids" />
         <link rel="icon" href="/favicon.ico" />
       </Head>
-      <BoidsNoSSR />;
+      <BoidsNoSSR flock={{ count: 10, delta: 1, behavior: "seekTarget" }} />;
     </>
   );
 }

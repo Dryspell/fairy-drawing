@@ -13,10 +13,21 @@ import Konva from "konva";
 export const TARGET_COLLISION_DISTANCE = 20;
 export const EDGE_PADDING = 50;
 
-export const randomXPos = () =>
-  Math.random() * (window.innerWidth - 3 * EDGE_PADDING) + 1.5 * EDGE_PADDING;
-export const randomYPos = () =>
-  Math.random() * (window.innerHeight - 3 * EDGE_PADDING) + 1.5 * EDGE_PADDING;
+export const randomXPos = (boundaries: StageBoundaries) => {
+  const stageWidth = getStageWidth(boundaries);
+  return Math.random() * (stageWidth - 3 * EDGE_PADDING) + 1.5 * EDGE_PADDING;
+};
+export const randomYPos = (boundaries: StageBoundaries) => {
+  const stageHeight = getStageHeight(boundaries);
+  return Math.random() * (stageHeight - 3 * EDGE_PADDING) + 1.5 * EDGE_PADDING;
+};
+
+export type StageBoundaries = {
+  x0: number;
+  x1: number;
+  y0: number;
+  y1: number;
+};
 
 export type Boid = {
   name: string;
@@ -47,13 +58,14 @@ export type Boid = {
 };
 const initialDirection = 90; // Math.random() * 360;
 
-export const initialBoidState: (behavior?: string) => Boid = (
+export const initialBoidState = (
+  boundaries: StageBoundaries,
   behavior?: string
 ) => {
   const initialPosition = {
     name: faker.name.firstName(),
-    x: randomXPos(),
-    y: randomYPos(),
+    x: randomXPos(boundaries),
+    y: randomYPos(boundaries),
     rotation: computeRotation(initialDirection),
     direction: initialDirection,
     speed: 1,
@@ -61,8 +73,8 @@ export const initialBoidState: (behavior?: string) => Boid = (
     wedgeAngle: 40,
     color: Konva.Util.getRandomColor(),
     target: {
-      x: randomXPos(),
-      y: randomYPos(),
+      x: randomXPos(boundaries),
+      y: randomYPos(boundaries),
     },
     torusClone: {
       x: 0,
@@ -79,14 +91,16 @@ export const initialBoidState: (behavior?: string) => Boid = (
       console.log("click");
     },
   };
+
   const { torusClone, torusTarget } = computeTorusPositions(
-    initialPosition as Boid
+    initialPosition as Boid,
+    boundaries
   );
 
   initialPosition.torusClone = torusClone;
   initialPosition.torusTarget = torusTarget;
 
-  return initialPosition;
+  return initialPosition as Boid;
 };
 
 export const SummaryText = (props: { boidState: Boid }) => {
@@ -144,28 +158,31 @@ export const BoidTarget = (props: { x: number; y: number; color: string }) => {
   );
 };
 
-export const computeTorusPositions = (boidState: Boid) => {
+export const computeTorusPositions = (
+  boidState: Boid,
+  boundaries: StageBoundaries
+) => {
   const { x, y, target } = boidState;
+  const stageWidth = getStageWidth(boundaries);
+  const stageHeight = getStageHeight(boundaries);
 
   const torusCloneX =
-    [x, x + window.innerWidth, x - window.innerWidth].find(
-      (a) => Math.abs(a - target.x) < window.innerWidth * 0.5
+    [x, x + stageWidth, x - stageWidth].find(
+      (a) => Math.abs(a - target.x) < stageWidth * 0.5
     ) || 0;
   const torusCloneY =
-    [y, y + window.innerHeight, y - window.innerHeight].find(
-      (a) => Math.abs(a - target.y) < window.innerHeight * 0.5
+    [y, y + stageHeight, y - stageHeight].find(
+      (a) => Math.abs(a - target.y) < stageHeight * 0.5
     ) || 0;
 
   const torusTargetX =
-    [target.x, target.x + window.innerWidth, target.x - window.innerWidth].find(
-      (a) => Math.abs(a - x) < window.innerWidth * 0.5
+    [target.x, target.x + stageWidth, target.x - stageWidth].find(
+      (a) => Math.abs(a - x) < stageWidth * 0.5
     ) || 0;
   const torusTargetY =
-    [
-      target.y,
-      target.y + window.innerHeight,
-      target.y - window.innerHeight,
-    ].find((a) => Math.abs(a - y) < window.innerHeight * 0.5) || 0;
+    [target.y, target.y + stageHeight, target.y - stageHeight].find(
+      (a) => Math.abs(a - y) < stageHeight * 0.5
+    ) || 0;
 
   return {
     torusClone: { x: torusCloneX, y: torusCloneY },
@@ -173,13 +190,20 @@ export const computeTorusPositions = (boidState: Boid) => {
   };
 };
 
-export const updateBoidState = (boidState: Boid, delta: number) => {
+export const updateBoidState = (
+  boidState: Boid,
+  delta: number,
+  boundaries: { x0: number; x1: number; y0: number; y1: number }
+) => {
   const newState = { ...boidState };
 
   const dX = Math.abs(newState.target.x - newState.x);
   const dY = Math.abs(newState.target.y - newState.y);
 
-  const { torusClone, torusTarget } = computeTorusPositions(newState);
+  const { torusClone, torusTarget } = computeTorusPositions(
+    newState,
+    boundaries
+  );
   newState.torusClone = torusClone;
   newState.torusTarget = torusTarget;
 
@@ -211,28 +235,27 @@ export const updateBoidState = (boidState: Boid, delta: number) => {
     ) % 360;
 
   newState.x =
-    newState.x <= window.innerWidth - EDGE_PADDING && newState.x >= EDGE_PADDING
+    newState.x <= boundaries.x0 && newState.x >= boundaries.x1
       ? newState.x +
         newState.speed * cosDeg(newState.direction) * (delta / msPerFrame)
-      : newState.x > window.innerWidth - EDGE_PADDING
-      ? EDGE_PADDING
-      : window.innerWidth - EDGE_PADDING;
+      : newState.x > boundaries.x1
+      ? boundaries.x0
+      : boundaries.x1;
 
   newState.y =
-    newState.y <= window.innerHeight - EDGE_PADDING &&
-    newState.y >= EDGE_PADDING
+    newState.y <= boundaries.y1 && newState.y >= boundaries.y0
       ? newState.y +
         newState.speed * sinDeg(newState.direction) * (delta / msPerFrame)
-      : newState.y > window.innerHeight - EDGE_PADDING
-      ? EDGE_PADDING
-      : window.innerHeight - EDGE_PADDING;
+      : newState.y > boundaries.y1
+      ? boundaries.y0
+      : boundaries.y1;
 
   if (dX ** 2 + dY ** 2 < TARGET_COLLISION_DISTANCE ** 2) {
     newState.target.x =
-      Math.random() * (window.innerWidth - 3 * EDGE_PADDING) +
+      Math.random() * (getStageWidth(boundaries) - 3 * EDGE_PADDING) +
       1.5 * EDGE_PADDING;
     newState.target.y =
-      Math.random() * (window.innerHeight - 3 * EDGE_PADDING) +
+      Math.random() * (getStageHeight(boundaries) - 3 * EDGE_PADDING) +
       1.5 * EDGE_PADDING;
     newState.score = newState.score + 1;
   }
@@ -268,3 +291,10 @@ export const Boid = (props: { boidState: Boid }) => {
     </>
   );
 };
+function getStageHeight(boundaries: StageBoundaries) {
+  return boundaries.y1 - boundaries.y0;
+}
+
+function getStageWidth(boundaries: StageBoundaries) {
+  return boundaries.x1 - boundaries.x0;
+}
