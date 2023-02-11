@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useCallback, useEffect } from "react";
 import { Boid } from "./Boid";
 import { useFrameTime } from "../../../lib/useFrameTime";
 import { initialBoidState, updateBoidState } from "../../../lib/boidState";
@@ -33,17 +33,15 @@ export const Flock = (props: {
   // console.log("frameTime", frameTime, frames);
 
   useEffect(() => {
-    setFrames({ last: frames.current, current: frameTime });
-  }, [frameTime, frames]);
-
-  useEffect(() => {
-    const delta = frames.current - frames.last;
-    // console.log({ delta });
+    const newFrames = { last: frames.current, current: frameTime };
+    const delta = newFrames.current - newFrames.last;
     const newBoids = boids.map((boid) => {
       return updateBoidState(boid, delta, props.boundaries);
     });
     setBoids(newBoids);
-  }, [frames, boids, props.boundaries]);
+    setFrames(newFrames);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [frameTime]);
 
   return (
     <>
