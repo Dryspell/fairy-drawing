@@ -11,5 +11,19 @@ export const useFrameTime = () => {
     requestAnimationFrame(frame);
     return () => cancelAnimationFrame(frameId);
   }, []);
-  return frameTime;
+
+  const [startTime, setStartTime] = React.useState(0);
+  const [pause, setPause] = React.useState({ paused: true, pauseTime: 0 });
+
+  const displayTime = pause.paused ? pause.pauseTime : frameTime - startTime;
+
+  const togglePause = () => {
+    if (!pause.paused) setPause({ paused: true, pauseTime: displayTime });
+    else {
+      setStartTime(frameTime - pause.pauseTime);
+      setPause({ paused: false, pauseTime: 0 });
+    }
+  };
+
+  return { displayTime, paused: pause.paused, togglePause };
 };

@@ -1,7 +1,7 @@
 import Head from "next/head";
 
 import React from "react";
-import GameRoom from "../../components/GameRoom";
+import GameRoom from "../../components/GameRoom/GameRoom";
 
 export default function VoteExchange() {
   return (

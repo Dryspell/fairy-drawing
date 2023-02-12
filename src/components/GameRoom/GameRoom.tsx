@@ -4,11 +4,13 @@ import { useState } from "react";
 import { BsChatLeftText } from "react-icons/bs";
 import { FiSettings } from "react-icons/fi";
 import { GoGraph } from "react-icons/go";
-import type { BoidsStageProps } from "../components/Boids/BoidsStage";
-import ChatBox from "./Chat/ChatBox";
+import { useFrameTime } from "../../../lib/useFrameTime";
+import type { BoidsStageProps } from "../Boids/BoidsStage";
+import ChatBox from "../Chat/ChatBox";
+import Timer from "../Stopwatch/Stopwatch";
 
 export const BoidsNoSSR = dynamic<BoidsStageProps>(
-  import("../components/Boids/BoidsStage"),
+  import("../Boids/BoidsStage"),
   {
     loading: () => (
       <>
@@ -26,6 +28,8 @@ export const BoidsNoSSR = dynamic<BoidsStageProps>(
 const PRIMARY_COL_HEIGHT = 500;
 
 export default function GameRoom() {
+  const frameTime = useFrameTime();
+
   const [loading, setloading] = useState(false);
   const [valid, setvalid] = useState(true);
 
@@ -53,7 +57,7 @@ export default function GameRoom() {
         <>
           <div className="flex h-full w-full items-center justify-center">
             <h1 className="text-center text-2xl font-semibold text-blue-500">
-              Ooooops, room is full
+              Oops, room is full
             </h1>
             <p className="text-center text-xl text-blue-500">
               Please wait for a while and refresh
@@ -66,12 +70,16 @@ export default function GameRoom() {
         <>
           <Container fluid className={"p-10"}>
             <h1>VoteExchange</h1>
+            <Timer
+              frameTime={frameTime}
+              styles={{ body: undefined, timer: undefined }}
+            />
             <Grid className={"p-6"}>
               <Grid.Col span={6}>
                 <BoidsNoSSR
                   width={PRIMARY_COL_HEIGHT}
                   height={PRIMARY_COL_HEIGHT}
-                  flock={{ count: 10, delta: 1, behavior: "seekTarget" }}
+                  flock={{ count: 10, behavior: "seekTarget", frameTime }}
                 />
                 <Button fullWidth variant="outline" className={"mt-4"}>
                   Vote

@@ -34,13 +34,13 @@ export default function Drawer({ ...props }: Props) {
   //DRAW
   const [lines, setLines] = useState<LineDraw[]>([]);
   // const [collabLines, setcollabLines] = useState<CollabLineDraw[]>([])
-  const [lastCenter, setlastCenter] = useState<Point>({ x: 0, y: 0 });
-  const [lastDistance, setlastDistance] = useState<number>(0);
+  const [lastCenter, setLastCenter] = useState<Point>({ x: 0, y: 0 });
+  const [lastDistance, setLastDistance] = useState<number>(0);
 
   //SOCKET
-  const [loading, setloading] = useState(true);
-  const [valid, setvalid] = useState(false);
-  const [collabMouseUser, setcollabMouseUser] = useState<mouseCollabUser[]>([]);
+  // const [loading, setloading] = useState(true);
+  // const [valid, setvalid] = useState(false);
+  const [collabMouseUser, setCollabMouseUser] = useState<mouseCollabUser[]>([]);
 
   const isDrawing = useRef(false);
   const shouldInit = useRef(true);
@@ -91,7 +91,7 @@ export default function Drawer({ ...props }: Props) {
     });
 
     socket.on("userMouseCollab", (data) => {
-      setcollabMouseUser(data);
+      setCollabMouseUser(data);
     });
 
     socket.on("newInitDrawCollab", (data) => {
@@ -261,14 +261,14 @@ export default function Drawer({ ...props }: Props) {
     };
 
     if (!lastCenter) {
-      setlastCenter(getCenter(point1, point2));
+      setLastCenter(getCenter(point1, point2));
     }
 
     const newCenter = getCenter(point1, point2);
     const dist = getDistance(point1, point2);
 
     if (!lastDistance) {
-      setlastDistance(dist);
+      setLastDistance(dist);
     }
 
     const pointTo = {
@@ -296,8 +296,8 @@ export default function Drawer({ ...props }: Props) {
   }
 
   function stopPinchZoom() {
-    setlastDistance(0);
-    setlastDistance(0);
+    setLastDistance(0);
+    setLastDistance(0);
   }
 
   function relativePointerPosition(node: any) {
@@ -331,7 +331,7 @@ export default function Drawer({ ...props }: Props) {
     <div className="relative h-full w-full">
       {collabMouseUser.map((el) =>
         socket != undefined && el.id != socket.id ? (
-          <Cursor id={el.id} x={el.x} y={el.y} key={el.id} />
+          <Cursor key={el.id} id={el.id} x={el.x} y={el.y} />
         ) : (
           <></>
         )

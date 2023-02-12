@@ -1,7 +1,7 @@
-import { NextApiRequest, NextApiResponse } from "next";
-import { Socket, Server as NextServer } from "net";
+import type { NextApiRequest, NextApiResponse } from "next";
+import type { Socket, Server as NextServer } from "net";
 import { Server as SocketIOServer } from "socket.io";
-import { Server as HttpServer } from "http";
+import type { Server as HttpServer } from "http";
 
 type NextApiResponseWithSocket = NextApiResponse & {
   socket: Socket & {

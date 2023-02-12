@@ -26,17 +26,17 @@ export default function Draw({}: Props) {
     height: 0,
   });
 
-  const [event, setevent] = useState<Event>("DRAW");
+  const [event, setEvent] = useState<Event>("DRAW");
 
-  const [loading, setloading] = useState(true);
-  const [valid, setvalid] = useState(false);
+  const [loading, setLoading] = useState(true);
+  const [valid, setValid] = useState(false);
 
   function handleLoading(value: boolean) {
-    setloading(value);
+    setLoading(value);
   }
 
   function handleValid(value: boolean) {
-    setvalid(value);
+    setValid(value);
   }
 
   useEffect(() => {
@@ -73,7 +73,7 @@ export default function Draw({}: Props) {
         <>
           <div className="flex h-full w-full items-center justify-center">
             <h1 className="text-center text-2xl font-semibold text-blue-500">
-              Ooooops, room is full
+              Oops, room is full
             </h1>
             <p className="text-center text-xl text-blue-500">
               Please wait for a while and refresh
@@ -87,13 +87,13 @@ export default function Draw({}: Props) {
           <button
             className="absolute top-10 left-10 z-20 rounded border-2 p-2 transition-all hover:border-black"
             // eslint-disable-next-line @typescript-eslint/no-misused-promises
-            onClick={() => router.push("/")}
+            onClick={() => router.push("/draw")}
           >
             <ChevronLeftIcon className="h-5 w-5 outline-current" />
           </button>
           <div className="absolute top-10 left-1/2 z-20 flex w-fit -translate-x-1/2 gap-5 rounded-md border-2 bg-white px-5 py-1 shadow">
             <button
-              onClick={() => setevent("GRAB")}
+              onClick={() => setEvent("GRAB")}
               // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-call
               className={clsx(
                 "cursor-pointer rounded-md p-1 transition-colors hover:bg-gray-200",
@@ -103,7 +103,7 @@ export default function Draw({}: Props) {
               <HandRaisedIcon className="h-5 w-5 text-black" />
             </button>
             <button
-              onClick={() => setevent("DRAW")}
+              onClick={() => setEvent("DRAW")}
               // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-call
               className={clsx(
                 "cursor-pointer rounded-md p-1 transition-colors hover:bg-gray-200",
@@ -113,7 +113,7 @@ export default function Draw({}: Props) {
               <PencilIcon className="h-5 w-5 text-black" />
             </button>
             <button
-              onClick={() => setevent("ERASE")}
+              onClick={() => setEvent("ERASE")}
               // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-call
               className={clsx(
                 "cursor-pointer rounded-md p-1 transition-colors hover:bg-gray-200",

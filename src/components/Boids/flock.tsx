@@ -1,11 +1,10 @@
 import React, { useCallback, useEffect } from "react";
 import { Boid } from "./Boid";
-import { useFrameTime } from "../../../lib/useFrameTime";
+import type { useFrameTime } from "../../../lib/useFrameTime";
 import { initialBoidState, updateBoidState } from "../../../lib/boidState";
 
 export const Flock = (props: {
   count: number;
-  delta: number;
   behavior: string;
   helperOptions?: {
     targetLines: boolean;
@@ -16,7 +15,7 @@ export const Flock = (props: {
     showText: boolean;
   };
   boundaries: { x0: number; x1: number; y0: number; y1: number };
-  frames: { last: number; current: number };
+  frameTime: ReturnType<typeof useFrameTime>;
 }) => {
   const [boids, setBoids] = React.useState<Boid[]>(
     [...Array(props.count).keys()].map((index) =>
@@ -24,16 +23,17 @@ export const Flock = (props: {
     )
   );
 
-  const frameTime = useFrameTime();
-
   const [frames, setFrames] = React.useState({
-    last: frameTime,
-    current: frameTime,
+    last: props.frameTime.displayTime,
+    current: props.frameTime.displayTime,
   });
   // console.log("frameTime", frameTime, frames);
 
   useEffect(() => {
-    const newFrames = { last: frames.current, current: frameTime };
+    const newFrames = {
+      last: frames.current,
+      current: props.frameTime.displayTime,
+    };
     const delta = newFrames.current - newFrames.last;
     const newBoids = boids.map((boid) => {
       return updateBoidState(boid, delta, props.boundaries);
@@ -41,7 +41,7 @@ export const Flock = (props: {
     setBoids(newBoids);
     setFrames(newFrames);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [frameTime]);
+  }, [props.frameTime.displayTime]);
 
   return (
     <>

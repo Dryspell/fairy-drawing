@@ -1,11 +1,12 @@
 import React, { useEffect, useState } from "react";
 import { Stage, Layer } from "react-konva";
+import { useFrameTime } from "../../../lib/useFrameTime";
 import { Flock } from "./flock";
 
 export type BoidsStageProps = {
   width?: number;
   height?: number;
-  flock: Omit<Parameters<typeof Flock>[0], "boundaries" | "frames">;
+  flock: Omit<Parameters<typeof Flock>[0], "boundaries">;
 };
 
 function BoidsStage(props: BoidsStageProps) {
@@ -27,7 +28,9 @@ function BoidsStage(props: BoidsStageProps) {
     y0: 0,
     y1: height,
   });
-  const [frames, setFrames] = useState({ last: 0, current: 0 });
+
+  // const frameTime = useFrameTime();
+  // const [frames, setFrames] = useState({ last: 0, current: 0 });
 
   // This function calculate X and Y
   const getPosition = () => {
@@ -70,7 +73,7 @@ function BoidsStage(props: BoidsStageProps) {
     <div ref={stageRef}>
       <Stage width={width} height={height}>
         <Layer>
-          <Flock {...flock} boundaries={boundaries} frames={frames} />
+          <Flock {...flock} boundaries={boundaries} />
         </Layer>
       </Stage>
     </div>
