@@ -8,9 +8,6 @@ export const useFrameTime = () => {
   const displayTime = pause.paused ? pause.pauseTime : frameTime - startTime;
   const [frames, setFrames] = React.useState({ last: 0, current: 0 });
 
-  setFrames({ last: frames.current, current: displayTime });
-  const delta = frames.current - frames.last;
-
   React.useEffect(() => {
     let frameId: number;
     const frame = (time: number) => {
@@ -29,10 +26,14 @@ export const useFrameTime = () => {
     }
   };
 
+  React.useEffect(() => {
+    setFrames({ last: frames.current, current: displayTime });
+  }, [displayTime]);
+
   return {
     displayTime,
-    frameCount: displayTime / (1000 / 60),
-    delta,
+    frameCount: Math.floor(displayTime / (1000 / 60)),
+    delta: frames.current - frames.last,
     paused: pause.paused,
     togglePause,
   };

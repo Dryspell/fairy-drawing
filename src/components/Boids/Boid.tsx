@@ -1,53 +1,6 @@
 import { Circle, Line, Text, Wedge } from "react-konva";
-import { getStageHeight, getStageWidth } from "../../../lib/boidsUtils";
 import Konva from "konva";
-
-export const TARGET_COLLISION_DISTANCE = 20;
-export const EDGE_PADDING = 50;
-
-export const randomXPos = (boundaries: StageBoundaries) => {
-  const stageWidth = getStageWidth(boundaries);
-  return Math.random() * (stageWidth - 3 * EDGE_PADDING) + 1.5 * EDGE_PADDING;
-};
-export const randomYPos = (boundaries: StageBoundaries) => {
-  const stageHeight = getStageHeight(boundaries);
-  return Math.random() * (stageHeight - 3 * EDGE_PADDING) + 1.5 * EDGE_PADDING;
-};
-
-export type StageBoundaries = {
-  x0: number;
-  x1: number;
-  y0: number;
-  y1: number;
-};
-
-export type Boid = {
-  name: string;
-  x: number;
-  y: number;
-  rotation: number;
-  direction: number;
-  speed: number;
-  acceleration: number;
-  wedgeAngle: number;
-  color: string;
-  target: {
-    x: number;
-    y: number;
-  };
-  torusClone: {
-    x: number;
-    y: number;
-  };
-  torusTarget: {
-    x: number;
-    y: number;
-  };
-  angleToTarget: number;
-  score: number;
-  behavior: string;
-  handleClick: () => void;
-};
+import { Boid } from "../../../lib/boidTypes";
 
 export const SummaryText = (props: { boidState: Boid }) => {
   const { boidState } = props;
@@ -104,7 +57,7 @@ export const BoidTarget = (props: { x: number; y: number; color: string }) => {
   );
 };
 
-export const Boid = (props: { boidState: Boid }) => {
+export const BoidKonva = (props: { boidState: Boid }) => {
   const { boidState } = props;
   return (
     <>

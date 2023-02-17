@@ -1,45 +1,60 @@
 import { Button, Container, Grid, Skeleton, Tabs } from "@mantine/core";
 import dynamic from "next/dynamic";
-import { useState } from "react";
+import React, { useState } from "react";
 import { BsChatLeftText } from "react-icons/bs";
 import { FiSettings } from "react-icons/fi";
 import { GoGraph } from "react-icons/go";
+import { useBoidFlock } from "../../../lib/hooks/useBoidFlock";
 import { useFrameTime } from "../../../lib/hooks/useFrameTime";
-import type { BoidsStageProps } from "../Boids/BoidsStage";
+import { BoidsStageProps } from "../Boids/BoidsStage";
 import ChatBox from "../Chat/ChatBox";
 import Timer from "../Stopwatch/Stopwatch";
 
-export const BoidsNoSSR = dynamic<BoidsStageProps>(
-  import("../Boids/BoidsStage"),
-  {
-    loading: () => (
-      <>
-        <div className="flex h-full w-full items-center justify-center">
-          <h1 className="text-center text-2xl font-semibold text-blue-500">
-            Loading Boids ....
-          </h1>
-        </div>
-      </>
-    ),
-    ssr: false,
-  }
-);
+const BoidsNoSSR = dynamic<BoidsStageProps>(import("../Boids/BoidsStage"), {
+  loading: () => (
+    <>
+      <div className="flex h-full w-full items-center justify-center">
+        <h1 className="text-center text-2xl font-semibold text-blue-500">
+          Loading Boids ....
+        </h1>
+      </div>
+    </>
+  ),
+  ssr: false,
+});
 
-const PRIMARY_COL_HEIGHT = 500;
+const INITIAL_STAGE_DIM = 500;
 
 export default function GameRoom() {
+  // console.log("GameRoom Rendered");
+
+  const [stageBoundaries, setStageBoundaries] = React.useState({
+    x0: 0,
+    x1: INITIAL_STAGE_DIM,
+    y0: 0,
+    y1: INITIAL_STAGE_DIM,
+  });
+
   const frameTime = useFrameTime();
+  const flockState = useBoidFlock(
+    {
+      count: 10,
+      behavior: "seekTarget",
+    },
+    frameTime,
+    stageBoundaries
+  );
 
   const [loading, setloading] = useState(false);
   const [valid, setvalid] = useState(true);
 
-  function handleLoading(value: boolean) {
-    setloading(value);
-  }
+  // function handleLoading(value: boolean) {
+  //   setloading(value);
+  // }
 
-  function handleValid(value: boolean) {
-    setvalid(value);
-  }
+  // function handleValid(value: boolean) {
+  //   setvalid(value);
+  // }
 
   return (
     <div>
@@ -72,14 +87,15 @@ export default function GameRoom() {
             <h1>VoteExchange</h1>
             <Timer
               frameTime={frameTime}
+              showFrameCount={false}
               styles={{ body: undefined, timer: undefined }}
             />
             <Grid className={"p-6"}>
               <Grid.Col span={6}>
                 <BoidsNoSSR
-                  width={PRIMARY_COL_HEIGHT}
-                  height={PRIMARY_COL_HEIGHT}
-                  flock={{ count: 10, behavior: "seekTarget", frameTime }}
+                  stageBoundaries={stageBoundaries}
+                  setStageBoundaries={setStageBoundaries}
+                  flockState={flockState}
                 />
                 <Button fullWidth variant="outline" className={"mt-4"}>
                   Vote

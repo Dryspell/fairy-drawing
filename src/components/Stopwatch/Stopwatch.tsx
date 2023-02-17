@@ -21,26 +21,18 @@ export const formatTimer = (durationMs: number) => {
 
 const Timer = (props: {
   frameTime: ReturnType<typeof useFrameTime>;
+  showFrameCount: boolean;
   styles: { body: string | undefined; timer: string | undefined };
 }) => {
-  // const frameTime = props.frameTime;
-  // const [startTime, setStartTime] = React.useState(0);
-  // const [pause, setPause] = React.useState({ paused: true, pauseTime: 0 });
-
-  // const displayTime = pause.paused ? pause.pauseTime : frameTime - startTime;
-
-  // const togglePause = () => {
-  //   if (!pause.paused) setPause({ paused: true, pauseTime: displayTime });
-  //   else {
-  //     setStartTime(frameTime - pause.pauseTime);
-  //     setPause({ paused: false, pauseTime: 0 });
-  //   }
-  // };
-
   return (
     <div className={props.styles.body}>
       <div className={props.styles.timer}>
         <div>{formatTimer(props.frameTime.displayTime)}</div>
+        {props.showFrameCount && (
+          <div>
+            {props.frameTime.frameCount} - {props.frameTime.delta}
+          </div>
+        )}
         <button onClick={props.frameTime.togglePause}>
           {props.frameTime.paused ? "Play" : "Pause"}
         </button>

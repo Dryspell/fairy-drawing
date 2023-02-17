@@ -2,30 +2,30 @@ import {
   computeRotation,
   computeTorusPositions,
   cosDeg,
+  EDGE_PADDING,
+  getRandomColor,
   getStageHeight,
   getStageWidth,
   lerp,
   msPerFrame,
   radToDeg,
-  sinDeg,
-} from "./boidsUtils";
-import { faker } from "@faker-js/faker";
-import type { Boid, StageBoundaries } from "../src/components/Boids/Boid";
-import {
-  EDGE_PADDING,
   randomXPos,
   randomYPos,
+  sinDeg,
   TARGET_COLLISION_DISTANCE,
-} from "../src/components/Boids/Boid";
-import Konva from "konva";
-
-const initialDirection = 90; // Math.random() * 360;
+} from "./boidsUtils";
+import { faker } from "@faker-js/faker";
+import type { Boid, StageBoundaries } from "./boidTypes";
 
 export const initialBoidState = (
+  id: string | number,
   boundaries: StageBoundaries,
   behavior?: string
 ) => {
+  const initialDirection = Math.random() * 360;
+
   const initialPosition = {
+    id,
     name: faker.name.firstName(),
     x: randomXPos(boundaries),
     y: randomYPos(boundaries),
@@ -34,7 +34,7 @@ export const initialBoidState = (
     speed: 1,
     acceleration: 0,
     wedgeAngle: 40,
-    color: Konva.Util.getRandomColor(),
+    color: getRandomColor(),
     target: {
       x: randomXPos(boundaries),
       y: randomYPos(boundaries),

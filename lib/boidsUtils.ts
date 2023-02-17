@@ -1,4 +1,4 @@
-import type { Boid, StageBoundaries } from "../src/components/Boids/Boid";
+import type { Boid, StageBoundaries } from "./boidTypes";
 
 export function computeRotation(direction: number, boid?: Boid) {
   // 0 is east, 90 is south, 180 is west, 270 is north
@@ -71,3 +71,23 @@ export const computeTorusPositions = (
     torusTarget: { x: torusTargetX, y: torusTargetY },
   };
 };
+
+export const TARGET_COLLISION_DISTANCE = 20;
+export const EDGE_PADDING = 50;
+
+export const randomXPos = (boundaries: StageBoundaries) => {
+  const stageWidth = getStageWidth(boundaries);
+  return Math.random() * (stageWidth - 3 * EDGE_PADDING) + 1.5 * EDGE_PADDING;
+};
+export const randomYPos = (boundaries: StageBoundaries) => {
+  const stageHeight = getStageHeight(boundaries);
+  return Math.random() * (stageHeight - 3 * EDGE_PADDING) + 1.5 * EDGE_PADDING;
+};
+
+export function getRandomColor() {
+  let randColor = ((Math.random() * 0xffffff) << 0).toString(16);
+  while (randColor.length < 6) {
+    randColor = `0${randColor}`;
+  }
+  return `#${randColor}`;
+}

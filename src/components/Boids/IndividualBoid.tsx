@@ -1,13 +1,14 @@
 import React, { useEffect } from "react";
-import { Boid } from "./Boid";
+import { BoidKonva } from "./Boid";
 import Konva from "konva";
 import { useFrameTime } from "../../../lib/hooks/useFrameTime";
 import { initialBoidState, updateBoidState } from "../../../lib/boidState";
+import type { Boid } from "../../../lib/boidTypes";
 
 export const IndividualBoid = () => {
   console.log("Boid Rendered");
   const [boidState, setBoidState] = React.useState<Boid>(
-    initialBoidState({ x0: 0, x1: 500, y0: 0, y1: 500 })
+    initialBoidState(1, { x0: 0, x1: 500, y0: 0, y1: 500 })
   );
 
   const { delta, displayTime, frameCount } = useFrameTime();
@@ -32,7 +33,7 @@ export const IndividualBoid = () => {
 
   return (
     <>
-      <Boid key={boidState.name} boidState={boidState} />
+      <BoidKonva key={boidState.name} boidState={boidState} />
     </>
   );
 };

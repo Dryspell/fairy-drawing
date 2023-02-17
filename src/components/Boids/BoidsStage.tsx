@@ -1,38 +1,27 @@
 import React, { useEffect, useState } from "react";
 import { Stage, Layer } from "react-konva";
-import { useFrameTime } from "../../../lib/hooks/useFrameTime";
+import type { StageBoundaries } from "../../../lib/boidTypes";
 import { Flock } from "./flock";
 
 export type BoidsStageProps = {
-  width?: number;
-  height?: number;
-  flock: Omit<Parameters<typeof Flock>[0], "boundaries">;
+  stageBoundaries: StageBoundaries;
+  setStageBoundaries: React.Dispatch<React.SetStateAction<StageBoundaries>>;
+  flockState: Parameters<typeof Flock>[0]["flockState"];
 };
 
 function BoidsStage(props: BoidsStageProps) {
-  const [width, setWidth] = useState<number>(props.width || window.innerWidth);
-  const [height, setHeight] = useState<number>(
-    props.height || window.innerHeight
+  const [width, setWidth] = useState<number>(
+    props.stageBoundaries.x1 - props.stageBoundaries.x0 || window.innerWidth
   );
-  const { flock } = props;
-
-  console.log("KonvaCanvas Rendered");
+  const [height, setHeight] = useState<number>(
+    props.stageBoundaries.y1 - props.stageBoundaries.y0 || window.innerHeight
+  );
 
   const stageRef = React.useRef<HTMLDivElement>(null);
 
   const [stageX, setStageX] = useState<number>();
   const [stageY, setStageY] = useState<number>();
-  const [boundaries, setBoundaries] = useState({
-    x0: 0,
-    x1: width,
-    y0: 0,
-    y1: height,
-  });
 
-  // const frameTime = useFrameTime();
-  // const [frames, setFrames] = useState({ last: 0, current: 0 });
-
-  // This function calculate X and Y
   const getPosition = () => {
     if (stageRef.current === null) return;
     const x = stageRef.current.offsetLeft;
@@ -61,7 +50,7 @@ function BoidsStage(props: BoidsStageProps) {
 
   useEffect(() => {
     if (stageX && stageY)
-      setBoundaries({
+      props.setStageBoundaries({
         x0: stageX,
         x1: stageX + width,
         y0: stageY,
@@ -73,7 +62,7 @@ function BoidsStage(props: BoidsStageProps) {
     <div ref={stageRef}>
       <Stage width={width} height={height}>
         <Layer>
-          <Flock {...flock} boundaries={boundaries} />
+          <Flock flockState={props.flockState} />
         </Layer>
       </Stage>
     </div>
