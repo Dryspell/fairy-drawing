@@ -56,6 +56,7 @@ function BoidsStage(props: BoidsStageProps) {
         y0: stageY,
         y1: stageY + height,
       });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [stageX, stageY, height, width]);
 
   return (

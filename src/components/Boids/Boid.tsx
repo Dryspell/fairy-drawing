@@ -1,6 +1,6 @@
 import { Circle, Line, Text, Wedge } from "react-konva";
 import Konva from "konva";
-import { Boid } from "../../../lib/boidTypes";
+import type { Boid } from "../../../lib/boidTypes";
 
 export const SummaryText = (props: { boidState: Boid }) => {
   const { boidState } = props;

@@ -1,7 +1,7 @@
 import { initialBoidState, updateBoidState } from "../boidState";
 import React, { useEffect } from "react";
 import type { useFrameTime } from "./useFrameTime";
-import { StageBoundaries } from "../boidTypes";
+import type { StageBoundaries } from "../boidTypes";
 
 export type FlockProps = {
   count: number;
@@ -32,6 +32,7 @@ export const useBoidFlock = (
     setFlockState(
       flockState.map((boid) => updateBoidState(boid, delta, boundaries))
     );
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [frameCount]);
 
   return flockState;

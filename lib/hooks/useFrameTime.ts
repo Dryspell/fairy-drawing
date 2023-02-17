@@ -28,6 +28,7 @@ export const useFrameTime = () => {
 
   React.useEffect(() => {
     setFrames({ last: frames.current, current: displayTime });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [displayTime]);
 
   return {

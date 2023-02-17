@@ -27,6 +27,7 @@ export const IndividualBoid = () => {
     setBoidState(
       updateBoidState(newState, delta, { x0: 0, x1: 500, y0: 0, y1: 500 })
     );
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [frameCount, boidState]);
 
   // console.log({ boidState });

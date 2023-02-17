@@ -6,7 +6,7 @@ import { FiSettings } from "react-icons/fi";
 import { GoGraph } from "react-icons/go";
 import { useBoidFlock } from "../../../lib/hooks/useBoidFlock";
 import { useFrameTime } from "../../../lib/hooks/useFrameTime";
-import { BoidsStageProps } from "../Boids/BoidsStage";
+import type { BoidsStageProps } from "../Boids/BoidsStage";
 import ChatBox from "../Chat/ChatBox";
 import Timer from "../Stopwatch/Stopwatch";
 
@@ -45,16 +45,16 @@ export default function GameRoom() {
     stageBoundaries
   );
 
-  const [loading, setloading] = useState(false);
-  const [valid, setvalid] = useState(true);
+  const [loading, setLoading] = useState(false);
+  const [valid, setValid] = useState(true);
 
-  // function handleLoading(value: boolean) {
-  //   setloading(value);
-  // }
+  function handleLoading(value: boolean) {
+    setLoading(value);
+  }
 
-  // function handleValid(value: boolean) {
-  //   setvalid(value);
-  // }
+  function handleValid(value: boolean) {
+    setValid(value);
+  }
 
   return (
     <div>
