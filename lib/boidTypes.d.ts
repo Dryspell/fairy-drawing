@@ -32,3 +32,15 @@ export type Boid = {
   behavior: string;
   handleClick: () => void;
 };
+
+export type HelperOptions = {
+  showShortestDistanceLines: boolean;
+  showTarget: boolean;
+};
+
+export type TextOptions = {
+  show: boolean;
+  showAngles: boolean;
+  showNames: boolean;
+  showScores: boolean;
+};

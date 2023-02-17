@@ -1,12 +1,15 @@
 import React, { useEffect, useState } from "react";
 import { Stage, Layer } from "react-konva";
 import type { StageBoundaries } from "../../../lib/boidTypes";
+import type { BoidKonva } from "./Boid";
 import { Flock } from "./flock";
 
 export type BoidsStageProps = {
   stageBoundaries: StageBoundaries;
   setStageBoundaries: React.Dispatch<React.SetStateAction<StageBoundaries>>;
   flockState: Parameters<typeof Flock>[0]["flockState"];
+  helperOptions: Parameters<typeof BoidKonva>[0]["helperOptions"];
+  textOptions: Parameters<typeof BoidKonva>[0]["textOptions"];
 };
 
 function BoidsStage(props: BoidsStageProps) {
@@ -63,7 +66,11 @@ function BoidsStage(props: BoidsStageProps) {
     <div ref={stageRef}>
       <Stage width={width} height={height}>
         <Layer>
-          <Flock flockState={props.flockState} />
+          <Flock
+            flockState={props.flockState}
+            helperOptions={props.helperOptions}
+            textOptions={props.textOptions}
+          />
         </Layer>
       </Stage>
     </div>

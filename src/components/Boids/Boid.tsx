@@ -1,18 +1,22 @@
 import { Circle, Line, Text, Wedge } from "react-konva";
 import Konva from "konva";
-import type { Boid } from "../../../lib/boidTypes";
+import type { Boid, HelperOptions, TextOptions } from "../../../lib/boidTypes";
 
-export const SummaryText = (props: { boidState: Boid }) => {
+export const SummaryText = (props: {
+  boidState: Boid;
+  options: TextOptions;
+}) => {
   const { boidState } = props;
 
   const summary = [
-    `direction: ${boidState.direction.toFixed(0)}`,
-    `angleToTarget:${boidState.angleToTarget.toFixed(0)}`,
-    // `cos:${cosDeg(boidState.direction).toFixed(2)}`,
-    // `sin:${sinDeg(boidState.direction).toFixed(2)}`,
-    `name: ${boidState.name}`,
-    `score: ${boidState.score}`,
-  ].join("\n");
+    props.options.showAngles && `direction: ${boidState.direction.toFixed(0)}`,
+    props.options.showAngles &&
+      `angleToTarget:${boidState.angleToTarget.toFixed(0)}`,
+    props.options.showNames && `name: ${boidState.name}`,
+    props.options.showScores && `score: ${boidState.score}`,
+  ]
+    .filter((t) => t)
+    .join("\n");
 
   return <Text text={summary} x={boidState.x + 20} y={boidState.y + 20} />;
 };
@@ -57,11 +61,17 @@ export const BoidTarget = (props: { x: number; y: number; color: string }) => {
   );
 };
 
-export const BoidKonva = (props: { boidState: Boid }) => {
+export const BoidKonva = (props: {
+  boidState: Boid;
+  helperOptions: HelperOptions;
+  textOptions: TextOptions;
+}) => {
   const { boidState } = props;
   return (
     <>
-      <SummaryText boidState={boidState} />
+      {props.textOptions.show && (
+        <SummaryText boidState={boidState} options={props.textOptions} />
+      )}
       <Wedge
         x={boidState.x}
         y={boidState.y}
@@ -75,12 +85,16 @@ export const BoidKonva = (props: { boidState: Boid }) => {
           boidState.color = Konva.Util.getRandomColor();
         }}
       />
-      <BoidTarget
-        x={boidState.target.x}
-        y={boidState.target.y}
-        color={boidState.color}
-      />
-      <HelperLines boidState={boidState} />
+      {props.helperOptions.showTarget && (
+        <BoidTarget
+          x={boidState.target.x}
+          y={boidState.target.y}
+          color={boidState.color}
+        />
+      )}
+      {props.helperOptions.showShortestDistanceLines && (
+        <HelperLines boidState={boidState} />
+      )}
     </>
   );
 };

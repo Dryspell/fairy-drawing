@@ -1,7 +1,7 @@
 import React from "react";
 import dynamic from "next/dynamic";
 
-const KonvaNoSSR = dynamic(() => import("../components/KonvaTest"), {
+const KonvaNoSSR = dynamic(() => import("../../components/KonvaTest"), {
   ssr: false,
 });
 

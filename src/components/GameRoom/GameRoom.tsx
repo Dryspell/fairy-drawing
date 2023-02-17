@@ -1,4 +1,4 @@
-import { Button, Container, Grid, Skeleton, Tabs } from "@mantine/core";
+import { Button, Container, Grid, Skeleton, Switch, Tabs } from "@mantine/core";
 import dynamic from "next/dynamic";
 import React, { useState } from "react";
 import { BsChatLeftText } from "react-icons/bs";
@@ -28,6 +28,7 @@ const INITIAL_STAGE_DIM = 500;
 export default function GameRoom() {
   // console.log("GameRoom Rendered");
 
+  const frameTime = useFrameTime();
   const [stageBoundaries, setStageBoundaries] = React.useState({
     x0: 0,
     x1: INITIAL_STAGE_DIM,
@@ -35,7 +36,6 @@ export default function GameRoom() {
     y1: INITIAL_STAGE_DIM,
   });
 
-  const frameTime = useFrameTime();
   const flockState = useBoidFlock(
     {
       count: 10,
@@ -47,6 +47,16 @@ export default function GameRoom() {
 
   const [loading, setLoading] = useState(false);
   const [valid, setValid] = useState(true);
+
+  const [boidsDisplayOptions, setBoidsDisplayOptions] = useState([
+    "showShortestDistanceLines",
+    "showTarget",
+  ]);
+  const [boidsTextOptions, setBoidsTextOptions] = useState([
+    "showText",
+    "showNames",
+    "showScores",
+  ]);
 
   function handleLoading(value: boolean) {
     setLoading(value);
@@ -92,18 +102,51 @@ export default function GameRoom() {
             />
             <Grid className={"p-6"}>
               <Grid.Col span={6}>
+                <Switch.Group
+                  label="Display Controls"
+                  value={boidsDisplayOptions}
+                  onChange={setBoidsDisplayOptions}
+                >
+                  <Switch
+                    value="showShortestDistanceLines"
+                    label="ShortestDistanceLines"
+                  />
+                  <Switch value="showTarget" label="Target" />
+                </Switch.Group>
+                <Switch.Group
+                  label="Text Controls"
+                  value={boidsTextOptions}
+                  onChange={setBoidsTextOptions}
+                >
+                  <Switch value="showText" label="Text" />
+                  <Switch value="showAngles" label="Angles" />
+                  <Switch value="showNames" label="Names" />
+                  <Switch value="showScores" label="Scores" />
+                </Switch.Group>
                 <BoidsNoSSR
                   stageBoundaries={stageBoundaries}
                   setStageBoundaries={setStageBoundaries}
                   flockState={flockState}
+                  helperOptions={{
+                    showShortestDistanceLines: boidsDisplayOptions.includes(
+                      "showShortestDistanceLines"
+                    ),
+                    showTarget: boidsDisplayOptions.includes("showTarget"),
+                  }}
+                  textOptions={{
+                    show: boidsTextOptions.includes("showText"),
+                    showAngles: boidsTextOptions.includes("showAngles"),
+                    showNames: boidsTextOptions.includes("showNames"),
+                    showScores: boidsTextOptions.includes("showScores"),
+                  }}
                 />
-                <Button fullWidth variant="outline" className={"mt-4"}>
+                {/* <Button fullWidth variant="outline" className={"mt-4"}>
                   Vote
-                </Button>
+                </Button> */}
               </Grid.Col>
               <Grid.Col span={6}>
                 <Container>
-                  <Tabs orientation="horizontal">
+                  <Tabs defaultValue={"Chat"} orientation="horizontal">
                     <Tabs.List>
                       <Tabs.Tab value="Chat" icon={<BsChatLeftText />}>
                         Chat

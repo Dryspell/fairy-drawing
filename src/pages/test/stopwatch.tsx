@@ -1,11 +1,11 @@
 import React from "react";
 import dynamic from "next/dynamic";
 import Head from "next/head";
-import { useFrameTime } from "../../lib/hooks/useFrameTime";
-import styles from "../components/Stopwatch/Stopwatch.module.css";
+import { useFrameTime } from "../../../lib/hooks/useFrameTime";
+import styles from "../../components/Stopwatch/Stopwatch.module.css";
 
 const StopwatchNoSSR = dynamic(
-  () => import("../components/Stopwatch/Stopwatch"),
+  () => import("../../components/Stopwatch/Stopwatch"),
   {
     ssr: false,
   }
@@ -24,6 +24,7 @@ export default function StopwatchPage() {
       </Head>
       <StopwatchNoSSR
         frameTime={frameTime}
+        showFrameCount={false}
         styles={{ body: styles.body, timer: styles.timer }}
       />
     </>
