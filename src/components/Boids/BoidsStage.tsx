@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { Stage, Layer } from "react-konva";
-import { useFrameTime } from "../../../lib/useFrameTime";
+import { useFrameTime } from "../../../lib/hooks/useFrameTime";
 import { Flock } from "./flock";
 
 export type BoidsStageProps = {

@@ -1,5 +1,5 @@
 import React from "react";
-import type { useFrameTime } from "../../../lib/useFrameTime";
+import type { useFrameTime } from "../../../lib/hooks/useFrameTime";
 
 const leftPadZero = (value: string, length: number) => {
   while (value.length < length) {

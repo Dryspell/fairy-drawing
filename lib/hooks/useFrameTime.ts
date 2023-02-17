@@ -2,6 +2,15 @@ import React from "react";
 
 export const useFrameTime = () => {
   const [frameTime, setFrameTime] = React.useState(Date.now());
+  const [startTime, setStartTime] = React.useState(0);
+  const [pause, setPause] = React.useState({ paused: true, pauseTime: 0 });
+
+  const displayTime = pause.paused ? pause.pauseTime : frameTime - startTime;
+  const [frames, setFrames] = React.useState({ last: 0, current: 0 });
+
+  setFrames({ last: frames.current, current: displayTime });
+  const delta = frames.current - frames.last;
+
   React.useEffect(() => {
     let frameId: number;
     const frame = (time: number) => {
@@ -12,11 +21,6 @@ export const useFrameTime = () => {
     return () => cancelAnimationFrame(frameId);
   }, []);
 
-  const [startTime, setStartTime] = React.useState(0);
-  const [pause, setPause] = React.useState({ paused: true, pauseTime: 0 });
-
-  const displayTime = pause.paused ? pause.pauseTime : frameTime - startTime;
-
   const togglePause = () => {
     if (!pause.paused) setPause({ paused: true, pauseTime: displayTime });
     else {
@@ -25,5 +29,11 @@ export const useFrameTime = () => {
     }
   };
 
-  return { displayTime, paused: pause.paused, togglePause };
+  return {
+    displayTime,
+    frameCount: displayTime / (1000 / 60),
+    delta,
+    paused: pause.paused,
+    togglePause,
+  };
 };

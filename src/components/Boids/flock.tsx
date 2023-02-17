@@ -1,6 +1,6 @@
 import React, { useCallback, useEffect } from "react";
 import { Boid } from "./Boid";
-import type { useFrameTime } from "../../../lib/useFrameTime";
+import type { useFrameTime } from "../../../lib/hooks/useFrameTime";
 import { initialBoidState, updateBoidState } from "../../../lib/boidState";
 
 export const Flock = (props: {

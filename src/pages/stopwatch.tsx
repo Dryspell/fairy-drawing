@@ -1,7 +1,7 @@
 import React from "react";
 import dynamic from "next/dynamic";
 import Head from "next/head";
-import { useFrameTime } from "../../lib/useFrameTime";
+import { useFrameTime } from "../../lib/hooks/useFrameTime";
 import styles from "../components/Stopwatch/Stopwatch.module.css";
 
 const StopwatchNoSSR = dynamic(

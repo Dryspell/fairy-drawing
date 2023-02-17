@@ -1,25 +1,20 @@
-import { useFrameTime } from "../../../lib/useFrameTime";
 import React, { useEffect } from "react";
-import { Boid, initialBoidState, updateBoidState } from "./Boid";
+import { Boid } from "./Boid";
 import Konva from "konva";
+import { useFrameTime } from "../../../lib/hooks/useFrameTime";
+import { initialBoidState, updateBoidState } from "../../../lib/boidState";
 
 export const IndividualBoid = () => {
   console.log("Boid Rendered");
-  const [boidState, setBoidState] = React.useState<Boid>(initialBoidState);
+  const [boidState, setBoidState] = React.useState<Boid>(
+    initialBoidState({ x0: 0, x1: 500, y0: 0, y1: 500 })
+  );
 
-  const frameTime = useFrameTime();
+  const { delta, displayTime, frameCount } = useFrameTime();
 
-  const [frames, setFrames] = React.useState({
-    last: frameTime,
-    current: frameTime,
-  });
-
-  console.log("frameTime", frameTime, frames);
+  console.log("displayTime", displayTime);
 
   useEffect(() => {
-    setFrames({ last: frames.current, current: frameTime });
-    const delta = frames.current - frames.last;
-    console.log({ delta });
     // setFrame(frameTime);
     const newState = {
       ...boidState,
@@ -28,8 +23,10 @@ export const IndividualBoid = () => {
         setBoidState({ ...boidState, color: Konva.Util.getRandomColor() });
       },
     };
-    setBoidState(updateBoidState(newState, delta));
-  }, [frameTime, frames, boidState]);
+    setBoidState(
+      updateBoidState(newState, delta, { x0: 0, x1: 500, y0: 0, y1: 500 })
+    );
+  }, [frameCount, boidState]);
 
   // console.log({ boidState });
 

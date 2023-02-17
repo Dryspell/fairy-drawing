@@ -4,7 +4,7 @@ import { useState } from "react";
 import { BsChatLeftText } from "react-icons/bs";
 import { FiSettings } from "react-icons/fi";
 import { GoGraph } from "react-icons/go";
-import { useFrameTime } from "../../../lib/useFrameTime";
+import { useFrameTime } from "../../../lib/hooks/useFrameTime";
 import type { BoidsStageProps } from "../Boids/BoidsStage";
 import ChatBox from "../Chat/ChatBox";
 import Timer from "../Stopwatch/Stopwatch";
