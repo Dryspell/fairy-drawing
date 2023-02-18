@@ -1,3 +1,4 @@
+import { Typography } from "@mui/material";
 import React from "react";
 import type { useFrameTime } from "../../../lib/hooks/useFrameTime";
 
@@ -21,21 +22,30 @@ export const formatTimer = (durationMs: number) => {
 
 const Timer = (props: {
   frameTime: ReturnType<typeof useFrameTime>;
-  showFrameCount: boolean;
-  styles: { body: string | undefined; timer: string | undefined };
+  showFrameCount?: boolean;
+  showButton?: boolean;
+  styles?: { body: string | undefined; timer: string | undefined };
 }) => {
+  const showFrameCount = props.showFrameCount ?? false;
+  const showButton = props.showButton ?? false;
+  const styles = props.styles ?? { body: undefined, timer: undefined };
+
   return (
-    <div className={props.styles.body}>
-      <div className={props.styles.timer}>
-        <div>{formatTimer(props.frameTime.displayTime)}</div>
-        {props.showFrameCount && (
+    <div className={styles.body}>
+      <div className={styles.timer}>
+        <Typography variant="h6">
+          {formatTimer(props.frameTime.displayTime)}
+        </Typography>
+        {showFrameCount && (
           <div>
             {props.frameTime.frameCount} - {props.frameTime.delta}
           </div>
         )}
-        <button onClick={props.frameTime.togglePause}>
-          {props.frameTime.paused ? "Play" : "Pause"}
-        </button>
+        {showButton && (
+          <button onClick={props.frameTime.togglePause}>
+            {props.frameTime.paused ? "Play" : "Pause"}
+          </button>
+        )}
       </div>
     </div>
   );

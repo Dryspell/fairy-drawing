@@ -1,26 +1,7 @@
 import * as React from "react";
-import Button from "@mui/material/Button";
-import Dialog from "@mui/material/Dialog";
-import DialogActions from "@mui/material/DialogActions";
-import DialogContent from "@mui/material/DialogContent";
-import DialogContentText from "@mui/material/DialogContentText";
-import DialogTitle from "@mui/material/DialogTitle";
-import Paper from "@mui/material/Paper";
 import CloseIcon from "@mui/icons-material/Close";
-import IconButton from "@mui/material/IconButton";
-import type { PaperProps } from "@mui/material/Paper";
 import Draggable from "react-draggable";
-
-function PaperComponent(props: PaperProps) {
-  return (
-    <Draggable
-      handle="#draggable-dialog-title"
-      cancel={'[class*="MuiDialogContent-root"]'}
-    >
-      <Paper {...props} />
-    </Draggable>
-  );
-}
+import { DialogActions,DialogContent,DialogTitle, Popper, Paper, IconButton } from "@mui/material";
 
 export interface DialogTitleProps {
   id: string;
@@ -52,47 +33,42 @@ const DialogTitleCustom = (props: DialogTitleProps) => {
   );
 };
 
-export default function DraggableModal() {
-  const [open, setOpen] = React.useState(false);
-
-  const handleClickOpen = () => {
-    setOpen(true);
-  };
-
-  const handleClose = () => {
-    setOpen(false);
+export default function DraggableModal(props: {
+  open: boolean;
+  setOpen: React.Dispatch<React.SetStateAction<boolean>>;
+  title: React.ReactNode;
+  children?: React.ReactNode;
+  actions?: React.ReactNode;
+}) {
+  const handleClose = (
+    event?: unknown,
+    reason?: "backdropClick" | "escapeKeyDown"
+  ) => {
+    if (reason === "backdropClick") {
+      return;
+    }
+    props.setOpen(false);
   };
 
   return (
-    <div>
-      <Button variant="outlined" onClick={handleClickOpen}>
-        Open draggable dialog
-      </Button>
-      <Dialog
-        open={open}
-        onClose={handleClose}
-        PaperComponent={PaperComponent}
-        aria-labelledby="draggable-dialog-title"
-        disableAutoFocus
-        disableEnforceFocus
-        hideBackdrop
+    <>
+      <Draggable
+        handle="#draggable-dialog"
+        cancel={'[class*="MuiDialogContent-root"]'}
       >
-        <DialogTitleCustom onClose={handleClose} id="draggable-dialog-title">
-          Subscribe
-        </DialogTitleCustom>
-        <DialogContent>
-          <DialogContentText>
-            To subscribe to this website, please enter your email address here.
-            We will send updates occasionally.
-          </DialogContentText>
-        </DialogContent>
-        <DialogActions>
-          <Button autoFocus onClick={handleClose}>
-            Cancel
-          </Button>
-          <Button onClick={handleClose}>Subscribe</Button>
-        </DialogActions>
-      </Dialog>
-    </div>
+        <Popper id="draggable-dialog" open={props.open}>
+          <Paper className="max-w-md">
+            <DialogTitleCustom
+              onClose={handleClose}
+              id="draggable-dialog-title"
+            >
+              {props.title}
+            </DialogTitleCustom>
+            <DialogContent>{props.children}</DialogContent>
+            {props.actions && <DialogActions>{props.actions}</DialogActions>}
+          </Paper>
+        </Popper>
+      </Draggable>
+    </>
   );
 }
