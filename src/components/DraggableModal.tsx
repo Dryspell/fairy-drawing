@@ -1,4 +1,4 @@
-import * as React from "react";
+import React from "react";
 import CloseIcon from "@mui/icons-material/Close";
 import Draggable from "react-draggable";
 import {
@@ -39,28 +39,6 @@ const DialogTitleCustom = (props: DialogTitleProps) => {
     </DialogTitle>
   );
 };
-
-//! For virutal element see ref https://popper.js.org/docs/v2/virtual-elements/
-function generateGetBoundingClientRect(x = 0, y = 0) {
-  return () =>
-    ({
-      width: x,
-      height: y,
-      top: y,
-      right: x,
-      bottom: 0,
-      left: 0,
-    } as DOMRect);
-}
-
-type VirtualElement = {
-  getBoundingClientRect: () => DOMRect;
-  contextElement?: Element;
-};
-const virtualElement: VirtualElement = {
-  getBoundingClientRect: generateGetBoundingClientRect(1000, 500),
-};
-//! For virutal element see ref https://popper.js.org/docs/v2/virtual-elements/
 
 export default function DraggableModal(props: {
   open: boolean;
