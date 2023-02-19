@@ -29,22 +29,7 @@ const BoidsNoSSR = dynamic<BoidsStageProps>(import("../Boids/BoidsStage"), {
   ssr: false,
 });
 
-const INITIAL_STAGE_DIM = 500;
-
-export function ToggleButton(props: {
-  toggled: boolean;
-  setToggled: React.Dispatch<React.SetStateAction<boolean>>;
-}) {
-  return (
-    <Button
-      onClick={() => props.setToggled(!props.toggled)}
-      variant={props.toggled ? "outlined" : "contained"}
-      startIcon={<FiSettings className="h-5 w-5" />}
-    >
-      Hello
-    </Button>
-  );
-}
+const INITIAL_STAGE_DIM = 1000;
 
 export function BoidsOptionsModal(props: {
   openOptionsModal: boolean;
@@ -85,6 +70,38 @@ export function BoidsOptionsModal(props: {
   );
 }
 
+export function ChatModal(props: {
+  openChatModal: boolean;
+  setOpenChatModal: React.Dispatch<React.SetStateAction<boolean>>;
+  chat: any;
+}) {
+  return (
+    <DraggableModal
+      open={props.openChatModal}
+      setOpen={props.setOpenChatModal}
+      title="Chat"
+    >
+      <ChatBox />
+    </DraggableModal>
+  );
+}
+
+export function MarketModal(props: {
+  openMarketModal: boolean;
+  setOpenMarketModal: React.Dispatch<React.SetStateAction<boolean>>;
+  market: any;
+}) {
+  return (
+    <DraggableModal
+      open={props.openMarketModal}
+      setOpen={props.setOpenMarketModal}
+      title="Market"
+    >
+      <Skeleton height={"400px"} />
+    </DraggableModal>
+  );
+}
+
 export default function GameRoom() {
   // console.log("GameRoom Rendered");
 
@@ -93,7 +110,7 @@ export default function GameRoom() {
     x0: 0,
     x1: INITIAL_STAGE_DIM,
     y0: 0,
-    y1: INITIAL_STAGE_DIM,
+    y1: INITIAL_STAGE_DIM / 2,
   });
 
   const flockState = useBoidFlock(
@@ -119,6 +136,8 @@ export default function GameRoom() {
   ]);
 
   const [openOptionsModal, setOpenOptionsModal] = useState(false);
+  const [openChatModal, setOpenChatModal] = useState(false);
+  const [openMarketModal, setOpenMarketModal] = useState(false);
 
   function handleLoading(value: boolean) {
     setLoading(value);
@@ -155,8 +174,8 @@ export default function GameRoom() {
 
       {!loading && valid && (
         <>
-          <Container fluid className={"p-10"}>
-            <AppBar component={"nav"}>
+          <Container fluid className="p-10">
+            <AppBar component="nav">
               <Toolbar>
                 <IconButton
                   size="large"
@@ -186,78 +205,60 @@ export default function GameRoom() {
                 <Box sx={{ flexGrow: 1 }} />
                 <Box sx={{ display: { xs: "none", sm: "block" } }}>
                   <Button
+                    onClick={() => setOpenChatModal(!openChatModal)}
+                    variant="text"
+                    sx={{ color: "#fff" }}
+                    startIcon={<BsChatLeftText className="h-5 w-5" />}
+                  >
+                    Chat
+                  </Button>
+                  <Button
+                    onClick={() => setOpenMarketModal(!openMarketModal)}
+                    variant="text"
+                    sx={{ color: "#fff" }}
+                    startIcon={<GoGraph className="h-5 w-5" />}
+                  >
+                    Market
+                  </Button>
+                  <Button
                     onClick={() => setOpenOptionsModal(!openOptionsModal)}
                     variant="text"
-                    // variant={openOptionsModal ? "outlined" : "contained"}
                     sx={{ color: "#fff" }}
                     startIcon={<FiSettings className="h-5 w-5" />}
                   >
-                    Hello
+                    Settings
                   </Button>
                 </Box>
               </Toolbar>
             </AppBar>
-            <BoidsOptionsModal
-              openOptionsModal={openOptionsModal}
-              setOpenOptionsModal={setOpenOptionsModal}
-              boidsDisplayOptions={boidsDisplayOptions}
-              setBoidsDisplayOptions={setBoidsDisplayOptions}
-              boidsTextOptions={boidsTextOptions}
-              setBoidsTextOptions={setBoidsTextOptions}
-            />
-            <Grid className={"p-6"}>
-              <Grid.Col span={6}>
-                <BoidsNoSSR
-                  stageBoundaries={stageBoundaries}
-                  setStageBoundaries={setStageBoundaries}
-                  flockState={flockState}
-                  helperOptions={{
-                    showShortestDistanceLines: boidsDisplayOptions.includes(
-                      "showShortestDistanceLines"
-                    ),
-                    showTarget: boidsDisplayOptions.includes("showTarget"),
-                  }}
-                  textOptions={{
-                    show: boidsTextOptions.includes("showText"),
-                    showAngles: boidsTextOptions.includes("showAngles"),
-                    showNames: boidsTextOptions.includes("showNames"),
-                    showScores: boidsTextOptions.includes("showScores"),
-                  }}
-                />
-                {/* <Button fullWidth variant="outline" className={"mt-4"}>
-                  Vote
-                </Button> */}
-              </Grid.Col>
-              <Grid.Col span={6}>
-                <Container>
-                  <Tabs defaultValue={"Chat"} orientation="horizontal">
-                    <Tabs.List>
-                      <Tabs.Tab value="Chat" icon={<BsChatLeftText />}>
-                        Chat
-                      </Tabs.Tab>
-                      <Tabs.Tab value="Market" icon={<GoGraph />}>
-                        Market
-                      </Tabs.Tab>
-                      <Tabs.Tab value="Settings" icon={<FiSettings />}>
-                        Settings
-                      </Tabs.Tab>
-                    </Tabs.List>
-
-                    <Tabs.Panel value="Chat">
-                      <ChatBox />
-                    </Tabs.Panel>
-                    <Tabs.Panel value="Market">
-                      <p>Market</p>
-                      <Skeleton height={"400px"} />
-                    </Tabs.Panel>
-                    <Tabs.Panel value="Settings">
-                      <h2>Settings</h2>
-                      <Skeleton height={"400px"} />
-                    </Tabs.Panel>
-                  </Tabs>
-                </Container>
-              </Grid.Col>
-            </Grid>
+            <Box component="main">
+              <Toolbar />
+              <BoidsOptionsModal
+                openOptionsModal={openOptionsModal}
+                setOpenOptionsModal={setOpenOptionsModal}
+                boidsDisplayOptions={boidsDisplayOptions}
+                setBoidsDisplayOptions={setBoidsDisplayOptions}
+                boidsTextOptions={boidsTextOptions}
+                setBoidsTextOptions={setBoidsTextOptions}
+              />
+              <BoidsNoSSR
+                stageBoundaries={stageBoundaries}
+                setStageBoundaries={setStageBoundaries}
+                flockState={flockState}
+                helperOptions={{
+                  showShortestDistanceLines: boidsDisplayOptions.includes(
+                    "showShortestDistanceLines"
+                  ),
+                  showTarget: boidsDisplayOptions.includes("showTarget"),
+                }}
+                textOptions={{
+                  show: boidsTextOptions.includes("showText"),
+                  showAngles: boidsTextOptions.includes("showAngles"),
+                  showNames: boidsTextOptions.includes("showNames"),
+                  showScores: boidsTextOptions.includes("showScores"),
+                }}
+              />
+            </Box>
           </Container>
         </>
       )}
