@@ -14,6 +14,8 @@ import Timer from "../Stopwatch/Stopwatch";
 import IconButton from "@mui/material/IconButton";
 import MenuIcon from "@mui/icons-material/Menu";
 import { BoidsOptionsModal } from "../Modals/BoidsOptionsModal";
+import { ChatModal } from "../Modals/ChatModal";
+import { MarketModal } from "../Modals/MarketModal";
 
 const BoidsNoSSR = dynamic<BoidsStageProps>(import("../Boids/BoidsStage"), {
   loading: () => (
@@ -133,7 +135,10 @@ export default function GameRoom() {
                 <Box sx={{ flexGrow: 1 }} />
                 <Box sx={{ display: { xs: "none", sm: "block" } }}>
                   <Button
-                    onClick={() => setOpenChatModal(!openChatModal)}
+                    onClick={() => {
+                      console.log("Chat");
+                      setOpenChatModal(!openChatModal);
+                    }}
                     variant="text"
                     sx={{ color: "#fff" }}
                     startIcon={<BsChatLeftText className="h-5 w-5" />}
@@ -141,7 +146,10 @@ export default function GameRoom() {
                     Chat
                   </Button>
                   <Button
-                    onClick={() => setOpenMarketModal(!openMarketModal)}
+                    onClick={() => {
+                      console.log("Market");
+                      setOpenMarketModal(!openMarketModal);
+                    }}
                     variant="text"
                     sx={{ color: "#fff" }}
                     startIcon={<GoGraph className="h-5 w-5" />}
@@ -149,7 +157,10 @@ export default function GameRoom() {
                     Market
                   </Button>
                   <Button
-                    onClick={() => setOpenOptionsModal(!openOptionsModal)}
+                    onClick={() => {
+                      console.log("Settings");
+                      setOpenOptionsModal(!openOptionsModal);
+                    }}
                     variant="text"
                     sx={{ color: "#fff" }}
                     startIcon={<FiSettings className="h-5 w-5" />}
@@ -168,6 +179,16 @@ export default function GameRoom() {
                 setBoidsDisplayOptions={setBoidsDisplayOptions}
                 boidsTextOptions={boidsTextOptions}
                 setBoidsTextOptions={setBoidsTextOptions}
+              />
+              <ChatModal
+                openChatModal={openChatModal}
+                setOpenChatModal={setOpenChatModal}
+                chat={"chat"}
+              />
+              <MarketModal
+                openMarketModal={openMarketModal}
+                setOpenMarketModal={setOpenMarketModal}
+                market={"market"}
               />
               <BoidsNoSSR
                 stageBoundaries={stageBoundaries}

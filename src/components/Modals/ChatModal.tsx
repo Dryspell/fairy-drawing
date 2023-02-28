@@ -5,7 +5,7 @@ import ChatBox from "../Chat/ChatBox";
 export function ChatModal(props: {
   openChatModal: boolean;
   setOpenChatModal: React.Dispatch<React.SetStateAction<boolean>>;
-  chat: any;
+  chat: string;
 }) {
   return (
     <DraggableModal

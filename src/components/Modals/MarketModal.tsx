@@ -5,7 +5,7 @@ import DraggableModal from "../DraggableModal";
 export function MarketModal(props: {
   openMarketModal: boolean;
   setOpenMarketModal: React.Dispatch<React.SetStateAction<boolean>>;
-  market: any;
+  market: string;
 }) {
   return (
     <DraggableModal
