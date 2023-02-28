@@ -1,4 +1,4 @@
-import { Container, Grid, Skeleton, Switch, Tabs } from "@mantine/core";
+import { Container } from "@mantine/core";
 import { AppBar, Button, Stack, Toolbar, Typography } from "@mui/material";
 import Box from "@mui/material/Box";
 import dynamic from "next/dynamic";
@@ -10,11 +10,10 @@ import { GoGraph } from "react-icons/go";
 import { useBoidFlock } from "../../../lib/hooks/useBoidFlock";
 import { useFrameTime } from "../../../lib/hooks/useFrameTime";
 import type { BoidsStageProps } from "../Boids/BoidsStage";
-import ChatBox from "../Chat/ChatBox";
-import DraggableModal from "../DraggableModal";
 import Timer from "../Stopwatch/Stopwatch";
 import IconButton from "@mui/material/IconButton";
 import MenuIcon from "@mui/icons-material/Menu";
+import { BoidsOptionsModal } from "../Modals/BoidsOptionsModal";
 
 const BoidsNoSSR = dynamic<BoidsStageProps>(import("../Boids/BoidsStage"), {
   loading: () => (
@@ -30,77 +29,6 @@ const BoidsNoSSR = dynamic<BoidsStageProps>(import("../Boids/BoidsStage"), {
 });
 
 const INITIAL_STAGE_DIM = 1000;
-
-export function BoidsOptionsModal(props: {
-  openOptionsModal: boolean;
-  setOpenOptionsModal: React.Dispatch<React.SetStateAction<boolean>>;
-  boidsDisplayOptions: string[];
-  setBoidsDisplayOptions: React.Dispatch<React.SetStateAction<string[]>>;
-  boidsTextOptions: string[];
-  setBoidsTextOptions: React.Dispatch<React.SetStateAction<string[]>>;
-}) {
-  return (
-    <DraggableModal
-      open={props.openOptionsModal}
-      setOpen={props.setOpenOptionsModal}
-      title="Boids Options"
-    >
-      <Switch.Group
-        label="Display Controls"
-        value={props.boidsDisplayOptions}
-        onChange={props.setBoidsDisplayOptions}
-      >
-        <Switch
-          value="showShortestDistanceLines"
-          label="ShortestDistanceLines"
-        />
-        <Switch value="showTarget" label="Target" />
-      </Switch.Group>
-      <Switch.Group
-        label="Text Controls"
-        value={props.boidsTextOptions}
-        onChange={props.setBoidsTextOptions}
-      >
-        <Switch value="showText" label="Text" />
-        <Switch value="showAngles" label="Angles" />
-        <Switch value="showNames" label="Names" />
-        <Switch value="showScores" label="Scores" />
-      </Switch.Group>
-    </DraggableModal>
-  );
-}
-
-export function ChatModal(props: {
-  openChatModal: boolean;
-  setOpenChatModal: React.Dispatch<React.SetStateAction<boolean>>;
-  chat: any;
-}) {
-  return (
-    <DraggableModal
-      open={props.openChatModal}
-      setOpen={props.setOpenChatModal}
-      title="Chat"
-    >
-      <ChatBox />
-    </DraggableModal>
-  );
-}
-
-export function MarketModal(props: {
-  openMarketModal: boolean;
-  setOpenMarketModal: React.Dispatch<React.SetStateAction<boolean>>;
-  market: any;
-}) {
-  return (
-    <DraggableModal
-      open={props.openMarketModal}
-      setOpen={props.setOpenMarketModal}
-      title="Market"
-    >
-      <Skeleton height={"400px"} />
-    </DraggableModal>
-  );
-}
 
 export default function GameRoom() {
   // console.log("GameRoom Rendered");
