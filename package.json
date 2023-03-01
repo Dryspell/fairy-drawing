@@ -26,6 +26,7 @@
     "@trpc/next": "^10.8.1",
     "@trpc/react-query": "^10.8.1",
     "@trpc/server": "^10.8.1",
+    "clientjs": "^0.2.1",
     "clsx": "^1.2.1",
     "konva": "^8.4.2",
     "mathjs": "^11.5.0",
