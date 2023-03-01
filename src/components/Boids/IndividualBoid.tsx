@@ -34,7 +34,20 @@ export const IndividualBoid = () => {
 
   return (
     <>
-      <BoidKonva key={boidState.name} boidState={boidState} />
+      <BoidKonva
+        key={boidState.name}
+        boidState={boidState}
+        helperOptions={{
+          showShortestDistanceLines: true,
+          showTarget: true,
+        }}
+        textOptions={{
+          show: true,
+          showAngles: false,
+          showNames: true,
+          showScores: true,
+        }}
+      />
     </>
   );
 };
