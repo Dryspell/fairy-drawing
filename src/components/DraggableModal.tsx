@@ -60,16 +60,29 @@ export default function DraggableModal(props: {
   };
 
   return (
-    <Draggable cancel={'[class*="MuiDialogContent-root"]'} nodeRef={nodeRef}>
-      <Popper ref={nodeRef} open={props.open} anchorEl={null}>
-        <Paper className="relative top-48 -right-96 max-w-md">
-          <DialogTitleCustom onClose={handleClose} id="draggable-dialog-title">
-            {props.title}
-          </DialogTitleCustom>
-          <DialogContent>{props.children}</DialogContent>
-          {props.actions && <DialogActions>{props.actions}</DialogActions>}
-        </Paper>
-      </Popper>
+    <Draggable
+      defaultPosition={{ x: 500, y: 300 }}
+      cancel={'[class*="MuiDialogContent-root"]'}
+      nodeRef={nodeRef}
+    >
+      <div ref={nodeRef}>
+        <Popper
+          //  ref={nodeRef}
+          open={props.open}
+          anchorEl={nodeRef?.current || null}
+        >
+          <Paper className="relative max-w-md">
+            <DialogTitleCustom
+              onClose={handleClose}
+              id="draggable-dialog-title"
+            >
+              {props.title}
+            </DialogTitleCustom>
+            <DialogContent>{props.children}</DialogContent>
+            {props.actions && <DialogActions>{props.actions}</DialogActions>}
+          </Paper>
+        </Popper>
+      </div>
     </Draggable>
   );
 }
