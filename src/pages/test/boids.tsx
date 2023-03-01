@@ -1,4 +1,6 @@
-export {};
+export default function Page() {
+  return <div>Why arent you a cheeky lad</div>;
+}
 // import React from "react";
 // import dynamic from "next/dynamic";
 // import Head from "next/head";
