@@ -10,64 +10,92 @@ import ListItemText from "@mui/material/ListItemText";
 import InboxIcon from "@mui/icons-material/MoveToInbox";
 import MailIcon from "@mui/icons-material/Mail";
 
-export default function TemporaryDrawer() {
-  const anchor = "left";
-  const [drawerOpen, setDrawerOpen] = React.useState(false);
+const drawerLinksList = [
+  [
+    {
+      text: "Inbox",
+      icon: <InboxIcon />,
+      navigateLink: "/inbox",
+    },
+    {
+      text: "Starred",
+      icon: <MailIcon />,
+      navigateLink: "/starred",
+    },
+    {
+      text: "Send email",
+      icon: <MailIcon />,
+      navigateLink: "/send-email",
+    },
+  ],
+  [
+    {
+      text: "All mail",
+      icon: <MailIcon />,
+      navigateLink: "/all-mail",
+    },
+    {
+      text: "Trash",
+      icon: <MailIcon />,
+      navigateLink: "/trash",
+    },
+    {
+      text: "Spam",
+      icon: <MailIcon />,
+      navigateLink: "/spam",
+    },
+  ],
+];
 
-  const toggleDrawer = (open: boolean) => {
-    // if (
-    //   event.type === "keydown" &&
-    //   (event.key === "Tab" || event.key === "Shift")
-    // ) {
-    //   return;
-    // }
-
-    setDrawerOpen(open);
-  };
-
-  const list = (anchor: "top" | "left" | "right" | "bottom") => (
-    <Box
-      sx={{ width: anchor === "top" || anchor === "bottom" ? "auto" : 250 }}
-      role="presentation"
-      onClick={() => toggleDrawer(false)}
-      onKeyDown={() => toggleDrawer(false)}
-    >
-      <List>
-        {["Inbox", "Starred", "Send email", "Drafts"].map((text, index) => (
-          <ListItem key={text} disablePadding>
-            <ListItemButton>
-              <ListItemIcon>
-                {index % 2 === 0 ? <InboxIcon /> : <MailIcon />}
-              </ListItemIcon>
-              <ListItemText primary={text} />
-            </ListItemButton>
-          </ListItem>
-        ))}
-      </List>
-      <Divider />
-      <List>
-        {["All mail", "Trash", "Spam"].map((text, index) => (
-          <ListItem key={text} disablePadding>
-            <ListItemButton>
-              <ListItemIcon>
-                {index % 2 === 0 ? <InboxIcon /> : <MailIcon />}
-              </ListItemIcon>
-              <ListItemText primary={text} />
-            </ListItemButton>
-          </ListItem>
-        ))}
-      </List>
-    </Box>
+const drawerLinksListNode = (
+  drawerLinksList: Array<
+    { text: string; icon: JSX.Element; navigateLink: string }[]
+  >
+) => {
+  return (
+    <>
+      {drawerLinksList.map((list, index) => {
+        return (
+          <List key={index}>
+            {list.map((item, index) => {
+              return (
+                <ListItem key={item.text} disablePadding>
+                  <ListItemButton>
+                    <ListItemIcon>{item.icon}</ListItemIcon>
+                    <ListItemText primary={item.text} />
+                  </ListItemButton>
+                </ListItem>
+              );
+            })}
+            {index !== drawerLinksList.length - 1 && <Divider />}
+          </List>
+        );
+      })}
+    </>
   );
+};
+
+export default function TemporaryDrawer(props: {
+  drawerOpen: boolean;
+  setDrawerOpen: React.Dispatch<React.SetStateAction<boolean>>;
+}) {
+  const anchor = "left";
 
   return (
     <div>
       <Drawer
         anchor={anchor}
-        open={drawerOpen}
-        onClose={() => toggleDrawer(false)}
+        open={props.drawerOpen}
+        onClose={() => props.setDrawerOpen(false)}
       >
-        {list(anchor)}
+        <Box
+          sx={{ width: 250 }}
+          role="presentation"
+          onClick={() => props.setDrawerOpen(false)}
+          onKeyDown={() => props.setDrawerOpen(false)}
+        >
+          {drawerLinksListNode(drawerLinksList)}
+        </Box>
       </Drawer>
       ))
     </div>

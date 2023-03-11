@@ -40,6 +40,8 @@ export default function GameRoomLayout({
   const [openChatModal, setOpenChatModal] = useState(false);
   const [openMarketModal, setOpenMarketModal] = useState(false);
 
+  const [drawerOpen, setDrawerOpen] = React.useState(false);
+
   const [boidsDisplayOptions, setBoidsDisplayOptions] = useState(
     defaultBoidsDisplayOptions
   );
@@ -59,6 +61,7 @@ export default function GameRoomLayout({
                 color="inherit"
                 aria-label="open drawer"
                 sx={{ mr: 2 }}
+                onClick={() => setDrawerOpen(true)}
               >
                 <MenuIcon />
               </IconButton>
@@ -118,7 +121,10 @@ export default function GameRoomLayout({
               </Box>
             </Toolbar>
           </AppBar>
-          <TemporaryDrawer />
+          <TemporaryDrawer
+            drawerOpen={drawerOpen}
+            setDrawerOpen={setDrawerOpen}
+          />
           <ChatContext.Provider value={{ chat: { messages: [] } }}>
             <MarketContext.Provider value={{ market: {} }}>
               <BoidsMetaStateContext.Provider
