@@ -53,16 +53,16 @@ export default function GameRoom() {
   const [loading, setLoading] = useState(false);
   const [valid, setValid] = useState(true);
 
-  function handleLoading(value: boolean) {
-    setLoading(value);
-  }
+  // function handleLoading(value: boolean) {
+  //   setLoading(value);
+  // }
 
-  function handleValid(value: boolean) {
-    setValid(value);
-  }
+  // function handleValid(value: boolean) {
+  //   setValid(value);
+  // }
 
   return (
-    <div>
+    <div className="items-center justify-center align-middle">
       {loading && (
         <>
           <div className="flex h-full w-full items-center justify-center align-middle">

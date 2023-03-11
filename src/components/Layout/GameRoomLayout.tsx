@@ -21,6 +21,7 @@ import {
 } from "./GameRoomContext";
 import { signIn, useSession } from "next-auth/react";
 import { useRouter } from "next/router";
+import TemporaryDrawer from "./Drawer";
 
 export default function GameRoomLayout({
   children,
@@ -117,6 +118,7 @@ export default function GameRoomLayout({
               </Box>
             </Toolbar>
           </AppBar>
+          <TemporaryDrawer />
           <ChatContext.Provider value={{ chat: { messages: [] } }}>
             <MarketContext.Provider value={{ market: {} }}>
               <BoidsMetaStateContext.Provider
