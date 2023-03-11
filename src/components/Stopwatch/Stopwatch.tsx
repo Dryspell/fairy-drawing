@@ -14,10 +14,9 @@ export const formatTimer = (durationMs: number) => {
   const minutes = Math.floor(durationMs / (1000 * 60));
   const seconds = Math.floor(durationMs / 1000) % 60;
   const ms = Math.floor(durationMs / 10) % 100;
-  return `${minutes > 0 ? `${minutes}:` : ""}${seconds}:${leftPadZero(
-    `${ms}`,
-    2
-  )}`;
+  return `${minutes > 0 ? `${minutes}:` : ""}${
+    minutes > 0 ? leftPadZero(`${seconds}`, 2) : seconds
+  }:${leftPadZero(`${ms}`, 2)}`;
 };
 
 const Timer = (props: {

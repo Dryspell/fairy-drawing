@@ -59,9 +59,20 @@ export default function DraggableModal(props: {
     props.setOpen(false);
   };
 
+  const defaultPosition = {
+    x: 500,
+    y: 300,
+  };
+  if (typeof window !== "undefined") {
+    defaultPosition.x = window?.innerWidth ? window.innerWidth / 2 : 500;
+    defaultPosition.y = window?.innerHeight
+      ? window.innerHeight - window.innerHeight / 3
+      : 300;
+  }
+
   return (
     <Draggable
-      defaultPosition={{ x: 500, y: 300 }}
+      defaultPosition={defaultPosition}
       cancel={'[class*="MuiDialogContent-root"]'}
       nodeRef={nodeRef}
     >
