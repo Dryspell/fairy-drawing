@@ -1,5 +1,4 @@
 import Head from "next/head";
-
 import React from "react";
 import GameRoom from "../../components/GameRoom/GameRoom";
 import GameRoomLayout from "../../components/Layout/GameRoomLayout";
