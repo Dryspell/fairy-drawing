@@ -13,8 +13,10 @@ export default function SocketHandler(
   req: NextApiRequest,
   res: NextApiResponseWithSocket
 ) {
+  console.log(`Socket request for ChatId:${String(req.query.id)}`);
+
   if (res.socket.server.io) {
-    console.log("Already set up");
+    console.log("Server already established");
     res.end();
     return;
   }
@@ -28,12 +30,18 @@ export default function SocketHandler(
 
   res.socket.server.io = io;
 
+  console.log(`Established Server, ${io.sockets.adapter.rooms.size} rooms`);
+
   io.on("connection", (socket) => {
+    console.log("New connection", socket.id);
+
     socket.on("send-message", (obj) => {
+      console.log("Received message", obj);
+
       io.emit("receive-message", obj);
     });
   });
 
-  console.log("Setting up socket");
+  console.log("Finished setting up Server");
   res.end();
 }

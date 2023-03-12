@@ -7,6 +7,12 @@ import type {
   MessageData,
   ServerToClientEvents,
 } from "../../../lib/Chat/types";
+import { Box, Container, TextField } from "@mui/material";
+
+const origin = () =>
+  typeof window !== "undefined"
+    ? window.location.origin
+    : "http://localhost:3000";
 
 async function socketInitializer(
   chatId: string,
@@ -22,10 +28,14 @@ async function socketInitializer(
 
   const socket: Socket<ServerToClientEvents, ClientToServerEvents> = io();
 
+  console.log(`connected to ${chatId}`);
+
   socket.on(
     "receive-message",
     (data: Parameters<ServerToClientEvents["receive-message"]>[0]) => {
       setAllMessages((pre) => [...pre, data]);
+
+      console.log(`received: ${data.message}`);
     }
   );
   setSocket(socket);
@@ -44,6 +54,9 @@ const Home = () => {
   > | null>(null);
 
   useEffect(() => {
+    if (!router.query.id) return;
+    console.log(router.query);
+
     socketInitializer(
       router.query.id as string,
       setAllMessages,
@@ -53,7 +66,7 @@ const Home = () => {
     return () => {
       socket && socket.disconnect();
     };
-  }, []);
+  }, [router.query.id]);
 
   function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
@@ -73,16 +86,19 @@ const Home = () => {
   }
 
   return (
-    <div>
+    <Container>
       <h1>Chat app</h1>
       <h1>Enter a username</h1>
 
-      <input value={username} onChange={(e) => setUsername(e.target.value)} />
+      <TextField
+        value={username}
+        onChange={(e) => setUsername(e.target.value)}
+      />
 
       <br />
       <br />
 
-      <div>
+      <Box>
         {allMessages.map(({ username, message }, index) => (
           <div key={index}>
             {username}: {message}
@@ -92,7 +108,7 @@ const Home = () => {
         <br />
 
         <form onSubmit={handleSubmit}>
-          <input
+          <TextField
             name="message"
             placeholder="enter your message"
             value={message}
@@ -100,8 +116,8 @@ const Home = () => {
             autoComplete={"off"}
           />
         </form>
-      </div>
-    </div>
+      </Box>
+    </Container>
   );
 };
 
