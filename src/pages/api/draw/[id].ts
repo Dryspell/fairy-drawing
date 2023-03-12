@@ -1,19 +1,7 @@
 import type { NextApiRequest, NextApiResponse } from "next";
-import type { Socket, Server as NextServer } from "net";
 import { Server as SocketIOServer } from "socket.io";
 import type { Server as HttpServer } from "http";
-
-type NextApiResponseWithSocket = NextApiResponse & {
-  socket: Socket & {
-    server: NextServer & {
-      io: SocketIOServer;
-    };
-  };
-};
-
-type Req = {
-  id: string;
-};
+import { NextApiResponseWithSocket } from "../../../../lib/Chat/types";
 
 let ids: string[] = [];
 let waitIds: string[] = [];
@@ -83,6 +71,7 @@ export default function handler(
       });
     }
 
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
     res.socket.server.io = io;
   }
 
