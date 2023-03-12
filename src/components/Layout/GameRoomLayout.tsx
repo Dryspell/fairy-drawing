@@ -54,7 +54,7 @@ export default function GameRoomLayout({
       {sessionStatus === "authenticated" ? (
         <>
           <AppBar component="nav">
-            <Toolbar>
+            <Toolbar className="justify-between">
               <IconButton
                 size="large"
                 edge="start"
