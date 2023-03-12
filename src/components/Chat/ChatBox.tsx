@@ -1,9 +1,10 @@
 import { useEffect, useRef, useState } from "react";
 import { ScrollArea, Button, Stack, Group } from "@mantine/core";
 import { faker } from "@faker-js/faker";
-import Message, { MessageData, mockData } from "./Message";
+import Message, { mockData } from "./Message";
+import type { MessageData } from "./Message";
 
-export default function ChatBox(initialMessages: MessageData[]) {
+export default function ChatBox(props: { initialMessages?: MessageData[] }) {
   const viewport = useRef<HTMLDivElement>(null);
 
   const [messages, setMessages] = useState<MessageData[]>([]);
@@ -15,7 +16,7 @@ export default function ChatBox(initialMessages: MessageData[]) {
     });
 
   useEffect(() => {
-    !initialMessages.length &&
+    !props?.initialMessages?.length &&
       setMessages(
         Array.from({ length: 10 }).map((a) => {
           return {
