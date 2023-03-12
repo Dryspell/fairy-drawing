@@ -30,7 +30,7 @@ type Props = {
 
 let socket: Socket | undefined;
 
-export default function Drawer({ ...props }: Props) {
+export default function DrawCanvas({ ...props }: Props) {
   //DRAW
   const [lines, setLines] = useState<LineDraw[]>([]);
   // const [collabLines, setcollabLines] = useState<CollabLineDraw[]>([])

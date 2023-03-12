@@ -10,14 +10,14 @@ import clsx from "clsx";
 import type { Size, Event } from "../../components/Draw/types/types";
 import { useRouter } from "next/router";
 
-const Drawer = dynamic(() => import("../../components/Draw/Drawer"), {
+const DrawCanvas = dynamic(() => import("../../components/Draw/DrawCanvas"), {
   ssr: false,
 });
 type Props = {
   event: Event;
 };
 
-export default function Draw({}: Props) {
+export default function DrawPage({}: Props) {
   const router = useRouter();
 
   const containerRef = useRef<HTMLDivElement>(null);
@@ -125,7 +125,7 @@ export default function Draw({}: Props) {
           </div>
         </>
       )}
-      <Drawer
+      <DrawCanvas
         event={event}
         size={size}
         handleLoading={handleLoading}
