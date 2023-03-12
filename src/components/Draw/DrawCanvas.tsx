@@ -66,12 +66,15 @@ export default function DrawCanvas({ ...props }: Props) {
     };
   }, []);
 
+  const origin =
+    typeof window !== "undefined"
+      ? window.location.origin
+      : "http://localhost:3000";
+
   async function initSocket() {
     if (typeof id !== "string") return;
     await fetch(`/api/draw/${id}`);
-    socket = SocketIOClient(
-      `${process.env.NEXT_APP_URL || `http://localhost:3000`}/${id}`
-    );
+    socket = SocketIOClient(`${origin}/${id}`);
     socket.on("connect", () => {
       console.log("connected");
     });
@@ -334,9 +337,7 @@ export default function DrawCanvas({ ...props }: Props) {
       {collabMouseUser.map((el) =>
         socket != undefined && el.id != socket.id ? (
           <Cursor key={el.id} id={el.id} x={el.x} y={el.y} />
-        ) : (
-          <></>
-        )
+        ) : null
       )}
       <Stage
         onTouchStart={(e) => {
@@ -397,9 +398,7 @@ export default function DrawCanvas({ ...props }: Props) {
                   line.tool === "ERASE" ? "destination-out" : "source-over"
                 }
               />
-            ) : (
-              <></>
-            )
+            ) : null
           )}
         </Layer>
       </Stage>
