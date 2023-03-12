@@ -74,7 +74,7 @@ export default function DrawCanvas({ ...props }: Props) {
   async function initSocket() {
     if (typeof id !== "string") return;
     await fetch(`/api/draw/${id}`);
-    socket = SocketIOClient(`${origin}/${id}`);
+    socket = SocketIOClient(`${origin}/api/draw/${id}`);
     socket.on("connect", () => {
       console.log("connected");
     });
