@@ -17,20 +17,17 @@ const useStyles = createStyles((theme) => ({
   },
 }));
 
-interface CommentSimpleProps {
+export type MessageData = {
   postedAt: string;
   body: string;
   author: {
+    username: string;
     name: string;
     image: string;
   };
-}
+};
 
-export default function Message({
-  postedAt,
-  body,
-  author,
-}: CommentSimpleProps) {
+export default function Message({ postedAt, body, author }: MessageData) {
   const { classes } = useStyles();
   return (
     <div>

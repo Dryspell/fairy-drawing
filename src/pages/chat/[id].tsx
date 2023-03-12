@@ -8,6 +8,7 @@ import type {
   ServerToClientEvents,
 } from "../../../lib/Chat/types";
 import { Box, Container, TextField } from "@mui/material";
+import Message from "../../components/Chat/Message";
 
 const origin = () =>
   typeof window !== "undefined"
@@ -86,31 +87,26 @@ const Home = () => {
   }
 
   return (
-    <Container>
-      <h1>Chat app</h1>
-      <h1>Enter a username</h1>
-
+    <Container className="p-10">
       <TextField
+        name="username"
+        placeholder="Username"
         value={username}
         onChange={(e) => setUsername(e.target.value)}
       />
-
-      <br />
-      <br />
-
       <Box>
         {allMessages.map(({ username, message }, index) => (
-          <div key={index}>
-            {username}: {message}
-          </div>
+          <Message
+            key={index}
+            postedAt={""}
+            author={{ username, name: username, image: "" }}
+            body={message}
+          />
         ))}
-
-        <br />
-
         <form onSubmit={handleSubmit}>
           <TextField
             name="message"
-            placeholder="enter your message"
+            placeholder="Enter your message"
             value={message}
             onChange={(e) => setMessage(e.target.value)}
             autoComplete={"off"}
