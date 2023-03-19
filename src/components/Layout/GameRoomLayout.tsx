@@ -150,6 +150,7 @@ export default function GameRoomLayout({
                     openChatModal={openChatModal}
                     setOpenChatModal={setOpenChatModal}
                     chat={"chat"}
+                    roomId={"test"}
                   />
                   <MarketModal
                     openMarketModal={openMarketModal}

@@ -6,6 +6,7 @@ export function ChatModal(props: {
   openChatModal: boolean;
   setOpenChatModal: React.Dispatch<React.SetStateAction<boolean>>;
   chat: string;
+  roomId: string;
 }) {
   return (
     <DraggableModal
@@ -13,7 +14,7 @@ export function ChatModal(props: {
       setOpen={props.setOpenChatModal}
       title="Chat"
     >
-      <ChatBox />
+      <ChatBox roomId={props.roomId} />
     </DraggableModal>
   );
 }

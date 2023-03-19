@@ -101,6 +101,7 @@ const Home = () => {
             postedAt={""}
             author={{ username, name: username, image: "" }}
             text={message}
+            replies={[]}
           />
         ))}
         <form onSubmit={handleSubmit}>

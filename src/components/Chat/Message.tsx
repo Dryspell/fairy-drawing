@@ -1,8 +1,10 @@
 import { Text, Avatar, clsx } from "@mantine/core";
-import { Box, IconButton, Paper } from "@mui/material";
+import { IconButton, Input, Paper, TextField, Typography } from "@mui/material";
 import Reply from "@mui/icons-material/Reply";
-import EmojiEmotions from "@mui/icons-material/EmojiEmotions";
 import React from "react";
+import { Transition } from "@headlessui/react";
+import MoreHorizIcon from "@mui/icons-material/MoreHoriz";
+import AddReactionIcon from "@mui/icons-material/AddReaction";
 
 export const mockData = {
   postedAt: "10 minutes ago",
@@ -22,10 +24,18 @@ export type MessageData = {
     name: string;
     image: string;
   };
+  replies: MessageData[];
 };
 
-export default function ChatMessage({ postedAt, text, author }: MessageData) {
+export default function ChatMessage({
+  postedAt,
+  text,
+  author,
+  replies,
+}: MessageData) {
   const [isHovering, setIsHovering] = React.useState(false);
+  const [showReplies, setShowReplies] = React.useState(false);
+  const [showReplyInputField, setShowReplyInputField] = React.useState(false);
 
   const handleMouseEnter = () => {
     setIsHovering(true);
@@ -78,21 +88,60 @@ export default function ChatMessage({ postedAt, text, author }: MessageData) {
               "opacity-0",
               "transition-opacity",
               "absolute",
-              "right-0",
-              "top-0",
+              "right-4",
+              "top-2",
               isHovering && "opacity-100"
             )}
             elevation={2}
           >
-            <IconButton aria-label="reply" size="small">
+            <IconButton
+              aria-label="reply"
+              size="small"
+              onClick={() => setShowReplyInputField(true)}
+            >
               <Reply />
             </IconButton>
             <IconButton aria-label="emoji" size="small">
-              <EmojiEmotions />
+              <AddReactionIcon />
+            </IconButton>
+            <IconButton aria-label="more" size="small">
+              <MoreHorizIcon />
             </IconButton>
           </Paper>
         </div>
-        <div className="mt-2">{text}</div>
+        <div>
+          <Typography className="mt-2 pb-2">{text}</Typography>
+          {showReplyInputField && (
+            <TextField
+              className="mt-2"
+              id="reply-input"
+              label={`Reply to ${author.name}`}
+              fullWidth
+              multiline
+              maxRows={4}
+              placeholder={`Reply to ${author.name}...`}
+            />
+          )}
+          {replies && (
+            <Transition
+              show={
+                isHovering // showReplies
+              }
+              enter="transition-all duration-150 ease-out"
+              enterFrom="opacity-0 max-h-0"
+              enterTo="opacity-100 max-h-96"
+              leave="transition-all duration-150 ease-in"
+              leaveFrom="opacity-100 max-h-96"
+              leaveTo="opacity-0 max-h-0"
+            >
+              <ul className="pl-8">
+                {replies.map((reply, index) => (
+                  <ChatMessage key={index} {...reply} />
+                ))}
+              </ul>
+            </Transition>
+          )}
+        </div>
       </div>
     </div>
   );
