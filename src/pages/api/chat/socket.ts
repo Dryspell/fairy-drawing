@@ -13,7 +13,7 @@ export default function SocketHandler(
   req: NextApiRequest,
   res: NextApiResponseWithSocket
 ) {
-  console.log(`Socket request for ChatId:${String(req.query.id)}`);
+  console.log(`Socket request for ChatId:${String(req.query.chatId)}`);
 
   if (res.socket.server.io) {
     console.log("Server already established");

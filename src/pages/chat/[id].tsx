@@ -8,7 +8,7 @@ import type {
   ServerToClientEvents,
 } from "../../../lib/Chat/types";
 import { Box, Container, TextField } from "@mui/material";
-import Message from "../../components/Chat/Message";
+import ChatMessage from "../../components/Chat/Message";
 
 const origin = () =>
   typeof window !== "undefined"
@@ -25,7 +25,7 @@ async function socketInitializer(
     > | null>
   >
 ) {
-  await fetch(`/api/chat/${chatId}`);
+  await fetch(`/api/chat/socket?chatId=${chatId}`);
 
   const socket: Socket<ServerToClientEvents, ClientToServerEvents> = io();
 
@@ -96,11 +96,11 @@ const Home = () => {
       />
       <Box>
         {allMessages.map(({ username, message }, index) => (
-          <Message
+          <ChatMessage
             key={index}
             postedAt={""}
             author={{ username, name: username, image: "" }}
-            body={message}
+            text={message}
           />
         ))}
         <form onSubmit={handleSubmit}>

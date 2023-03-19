@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import { ScrollArea, Button, Stack, Group } from "@mantine/core";
 import { faker } from "@faker-js/faker";
-import Message, { mockData } from "./Message";
+import ChatMessage, { mockData } from "./Message";
 import type { MessageData } from "./Message";
 
 export default function ChatBox(props: { initialMessages?: MessageData[] }) {
@@ -22,7 +22,7 @@ export default function ChatBox(props: { initialMessages?: MessageData[] }) {
           return {
             author: { ...mockData.author, username: faker.internet.userName() },
             postedAt: mockData.postedAt,
-            body: faker.lorem.paragraph(),
+            text: faker.lorem.paragraph(),
           };
         })
       );
@@ -32,10 +32,10 @@ export default function ChatBox(props: { initialMessages?: MessageData[] }) {
     <Stack align="center" sx={{ height: 500 }}>
       <ScrollArea viewportRef={viewport}>
         {messages.map((message, index) => (
-          <Message
+          <ChatMessage
             key={index}
             postedAt={message.postedAt}
-            body={message.body}
+            text={message.text}
             author={message.author}
           />
         ))}

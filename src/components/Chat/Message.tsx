@@ -1,4 +1,8 @@
-import { createStyles, Text, Avatar, Group } from "@mantine/core";
+import { Text, Avatar, clsx } from "@mantine/core";
+import { Box, IconButton, Paper } from "@mui/material";
+import Reply from "@mui/icons-material/Reply";
+import EmojiEmotions from "@mui/icons-material/EmojiEmotions";
+import React from "react";
 
 export const mockData = {
   postedAt: "10 minutes ago",
@@ -10,16 +14,9 @@ export const mockData = {
   },
 };
 
-const useStyles = createStyles((theme) => ({
-  body: {
-    paddingLeft: 54,
-    paddingTop: theme.spacing.sm,
-  },
-}));
-
 export type MessageData = {
   postedAt: string;
-  body: string;
+  text: string;
   author: {
     username: string;
     name: string;
@@ -27,22 +24,76 @@ export type MessageData = {
   };
 };
 
-export default function Message({ postedAt, body, author }: MessageData) {
-  const { classes } = useStyles();
+export default function ChatMessage({ postedAt, text, author }: MessageData) {
+  const [isHovering, setIsHovering] = React.useState(false);
+
+  const handleMouseEnter = () => {
+    setIsHovering(true);
+  };
+
+  const handleMouseLeave = () => {
+    setIsHovering(false);
+  };
+
   return (
-    <div>
-      <Group>
-        <Avatar src={author.image} alt={author.name} radius="xl" />
-        <div>
-          <Text size="sm">{author.name}</Text>
-          <Text size="xs" color="dimmed">
-            {postedAt}
-          </Text>
+    <div
+      className={clsx(
+        "flex",
+        "flex-col",
+        "items-start",
+        "p-4",
+        "rounded-md",
+        "transition-colors",
+        "hover:bg-gray-200",
+        "cursor-pointer",
+        "relative",
+        "sm:flex-row"
+      )}
+      onMouseEnter={handleMouseEnter}
+      onMouseLeave={handleMouseLeave}
+    >
+      <div className="relative flex-shrink-0">
+        <Avatar
+          src={author.image}
+          alt={author.username}
+          className="mr-2"
+          radius="xl"
+        />
+      </div>
+      <div className="flex flex-col">
+        <div className="flex w-full items-center justify-between">
+          <div className="flex items-center">
+            <Text size="sm" className="px-1">
+              {author.username}
+            </Text>
+            <Text size="xs" color="dimmed">
+              {postedAt}
+            </Text>
+          </div>
+          <Paper
+            className={clsx(
+              "mt-2 sm:mt-0",
+              "flex",
+              "items-center",
+              "opacity-0",
+              "transition-opacity",
+              "absolute",
+              "right-0",
+              "top-0",
+              isHovering && "opacity-100"
+            )}
+            elevation={2}
+          >
+            <IconButton aria-label="reply" size="small">
+              <Reply />
+            </IconButton>
+            <IconButton aria-label="emoji" size="small">
+              <EmojiEmotions />
+            </IconButton>
+          </Paper>
         </div>
-      </Group>
-      <Text className={classes.body} size="sm">
-        {body}
-      </Text>
+        <div className="mt-2">{text}</div>
+      </div>
     </div>
   );
 }
