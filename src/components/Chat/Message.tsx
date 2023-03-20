@@ -5,6 +5,7 @@ import React from "react";
 import { Transition } from "@headlessui/react";
 import MoreHorizIcon from "@mui/icons-material/MoreHoriz";
 import AddReactionIcon from "@mui/icons-material/AddReaction";
+import { Remark } from "react-remark";
 
 export const mockData = {
   postedAt: "10 minutes ago",
@@ -110,7 +111,9 @@ export default function ChatMessage({
           </Paper>
         </div>
         <div>
-          <Typography className="mt-2 pb-2">{text}</Typography>
+          <div className="mt-2 pb-2">
+            <Remark>{text}</Remark>
+          </div>
           {showReplyInputField && (
             <TextField
               className="mt-2"
