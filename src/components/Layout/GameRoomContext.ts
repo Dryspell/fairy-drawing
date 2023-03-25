@@ -1,6 +1,9 @@
 import { createContext } from "react";
+import { MessageData } from "../Chat/Message";
 
-export const ChatContext = createContext({ chat: { messages: [] } });
+export const ChatContext = createContext({
+  chat: { messages: [] as MessageData[] },
+});
 export const MarketContext = createContext({ market: {} });
 
 export const defaultBoidsDisplayOptions = [

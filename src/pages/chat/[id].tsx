@@ -4,11 +4,11 @@ import io from "socket.io-client";
 import type { Socket } from "socket.io-client";
 import type {
   ClientToServerEvents,
-  MessageData,
   ServerToClientEvents,
 } from "../../../lib/Chat/types";
 import { Box, Container, TextField } from "@mui/material";
-import ChatMessage from "../../components/Chat/Message";
+import ChatMessage, { MessageData } from "../../components/Chat/Message";
+import { faker } from "@faker-js/faker";
 
 const origin = () =>
   typeof window !== "undefined"
@@ -36,7 +36,7 @@ async function socketInitializer(
     (data: Parameters<ServerToClientEvents["receive-message"]>[0]) => {
       setAllMessages((pre) => [...pre, data]);
 
-      console.log(`received: ${data.message}`);
+      console.log(`[Message] ${data.messageId}: ${data.text}`);
     }
   );
   setSocket(socket);
@@ -45,9 +45,9 @@ async function socketInitializer(
 const Home = () => {
   const router = useRouter();
 
-  const [message, setMessage] = useState("");
+  const [chatMessage, setChatMessage] = useState("");
   const [username, setUsername] = useState("");
-  const [allMessages, setAllMessages] = useState<MessageData[]>([]);
+  const [messages, setMessages] = useState<MessageData[]>([]);
 
   const [socket, setSocket] = useState<Socket<
     ServerToClientEvents,
@@ -58,32 +58,40 @@ const Home = () => {
     if (!router.query.id) return;
     console.log(router.query);
 
-    socketInitializer(
-      router.query.id as string,
-      setAllMessages,
-      setSocket
-    ).catch((err) => console.log(err));
+    socketInitializer(router.query.id as string, setMessages, setSocket).catch(
+      (err) => console.log(err)
+    );
 
     return () => {
       socket && socket.disconnect();
     };
   }, [router.query.id]);
 
-  function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
+  function socketSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
     if (!socket) {
       console.log("socket not initialized");
       return;
     }
 
+    const message: MessageData = {
+      messageId: faker.datatype.uuid(),
+      roomId: String(router.query.id),
+      text: chatMessage,
+      author: {
+        username: username || "Anonymous",
+        name: username || "Anonymous",
+        image: faker.internet.avatar() || "",
+      },
+      postedAt: new Date().toLocaleDateString(),
+      replies: [],
+    };
+
     console.log("emitted");
 
-    socket.emit("send-message", {
-      username,
-      message,
-    });
+    socket.emit("send-message", message);
 
-    setMessage("");
+    setChatMessage("");
   }
 
   return (
@@ -95,21 +103,20 @@ const Home = () => {
         onChange={(e) => setUsername(e.target.value)}
       />
       <Box>
-        {allMessages.map(({ username, message }, index) => (
+        {messages.map((message, index) => (
           <ChatMessage
             key={index}
-            postedAt={""}
-            author={{ username, name: username, image: "" }}
-            text={message}
-            replies={[]}
+            message={message}
+            messages={messages}
+            setMessages={setMessages}
           />
         ))}
-        <form onSubmit={handleSubmit}>
+        <form onSubmit={socketSubmit}>
           <TextField
             name="message"
             placeholder="Enter your message"
-            value={message}
-            onChange={(e) => setMessage(e.target.value)}
+            value={chatMessage}
+            onChange={(e) => setChatMessage(e.target.value)}
             autoComplete={"off"}
           />
         </form>

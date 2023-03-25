@@ -1,5 +1,6 @@
 import type { NextApiResponse } from "next";
 import type { ServerOptions } from "socket.io";
+import { MessageData } from "../../src/components/Chat/Message";
 
 export type NextApiResponseWithSocket = NextApiResponse & SocketResponse;
 
@@ -31,9 +32,4 @@ export interface ClientToServerEvents {
 export interface InterServerEvents {
   ping: () => void;
   // "receive-message": (data: SocketData) => void;
-}
-
-export interface MessageData {
-  username: string;
-  message: string;
 }

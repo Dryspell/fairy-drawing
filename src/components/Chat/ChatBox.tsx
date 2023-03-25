@@ -1,18 +1,44 @@
-import { useEffect, useRef, useState } from "react";
+import { useContext, useEffect, useRef, useState } from "react";
 import { ScrollArea, Stack, Group } from "@mantine/core";
 import { faker } from "@faker-js/faker";
-import ChatMessage, { mockData } from "./Message";
+import ChatMessage from "./Message";
 import type { MessageData } from "./Message";
 import { Box, IconButton, TextField } from "@mui/material";
 import KeyboardDoubleArrowDownIcon from "@mui/icons-material/KeyboardDoubleArrowDown";
+import { ChatContext } from "../Layout/GameRoomContext";
+import { useSession } from "next-auth/react";
 
 export default function ChatBox(props: {
   initialMessages?: MessageData[];
   roomId: string;
 }) {
   const viewport = useRef<HTMLDivElement>(null);
+  const { data: session } = useSession();
+  const {} = useContext(ChatContext);
 
   const [messages, setMessages] = useState<MessageData[]>([]);
+  const [chatMessage, setChatMessage] = useState("");
+
+  const handleChatSubmit = () => {
+    setMessages((pre) => [
+      ...pre,
+      {
+        messageId: faker.datatype.uuid(),
+        roomId: props.roomId,
+        text: chatMessage,
+        author: {
+          username: session?.user?.name || "Anonymous",
+          name: session?.user?.name || "Anonymous",
+          image: session?.user?.image || "",
+        },
+        postedAt: new Date().toLocaleDateString(),
+        replies: [],
+      },
+    ]);
+
+    setChatMessage("");
+    scrollToBottom();
+  };
 
   const scrollToBottom = () =>
     viewport?.current?.scrollTo({
@@ -21,12 +47,20 @@ export default function ChatBox(props: {
     });
 
   useEffect(() => {
+    scrollToBottom();
+
     !props?.initialMessages?.length &&
       setMessages(
         Array.from({ length: 10 }).map((a) => {
           return {
-            author: { ...mockData.author, username: faker.internet.userName() },
-            postedAt: mockData.postedAt,
+            messageId: faker.datatype.uuid(),
+            roomId: props.roomId,
+            author: {
+              image: faker.internet.avatar(),
+              name: faker.internet.userName(),
+              username: faker.internet.email(),
+            },
+            postedAt: `${Math.floor(Math.random() * 60)} minutes ago`,
             text: faker.lorem.paragraph(),
             replies: [],
           };
@@ -41,10 +75,9 @@ export default function ChatBox(props: {
           {messages.map((message, index) => (
             <ChatMessage
               key={index}
-              postedAt={message.postedAt}
-              text={message.text}
-              author={message.author}
-              replies={message.replies}
+              message={message}
+              messages={messages}
+              setMessages={setMessages}
             />
           ))}
           <Box sx={{ position: "absolute", bottom: 2, right: 8 }}>
@@ -54,7 +87,7 @@ export default function ChatBox(props: {
           </Box>
         </ScrollArea>
         <Box sx={{ width: "100%" }}>
-          <div className="flex-grow">
+          <form className="flex-grow" onSubmit={handleChatSubmit}>
             <TextField
               id="reply-input"
               label={`Chat...`}
@@ -62,8 +95,15 @@ export default function ChatBox(props: {
               multiline
               maxRows={4}
               placeholder={`Chat...`}
+              onChange={(e) => setChatMessage(e.target.value)}
+              onKeyDown={(e) => {
+                if (e.key === "Enter" && !e.shiftKey) {
+                  e.preventDefault();
+                  handleChatSubmit();
+                }
+              }}
             />
-          </div>
+          </form>
         </Box>
       </Stack>
     </div>
