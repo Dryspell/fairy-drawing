@@ -14,7 +14,7 @@ export function ChatModal(props: {
       setOpen={props.setOpenChatModal}
       title="Chat"
     >
-      <ChatBox roomId={props.roomId} />
+      <ChatBox />
     </DraggableModal>
   );
 }
