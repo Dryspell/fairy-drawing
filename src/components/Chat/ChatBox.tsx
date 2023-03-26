@@ -1,11 +1,11 @@
 import { useContext, useEffect, useRef, useState } from "react";
-import { ScrollArea, Stack, Group } from "@mantine/core";
+import { ScrollArea, Stack } from "@mantine/core";
 import { faker } from "@faker-js/faker";
 import ChatMessage from "./Message";
 import type { MessageData } from "./Message";
 import { Box, IconButton, TextField } from "@mui/material";
 import KeyboardDoubleArrowDownIcon from "@mui/icons-material/KeyboardDoubleArrowDown";
-import { ChatContext } from "../Layout/GameRoomContext";
+import { ChatContext } from "../Layout/ChatContext";
 import { useSession } from "next-auth/react";
 
 export default function ChatBox(props: {
@@ -51,7 +51,7 @@ export default function ChatBox(props: {
 
     !props?.initialMessages?.length &&
       setMessages(
-        Array.from({ length: 10 }).map((a) => {
+        Array.from({ length: 10 }).map(() => {
           return {
             messageId: faker.datatype.uuid(),
             roomId: props.roomId,
@@ -66,7 +66,7 @@ export default function ChatBox(props: {
           };
         })
       );
-  }, []);
+  }, [props?.initialMessages?.length, props.roomId]);
 
   return (
     <div className="mt-0">

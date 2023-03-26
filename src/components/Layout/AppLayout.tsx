@@ -14,7 +14,6 @@ import { ChatModal } from "../Modals/ChatModal";
 import { MarketModal } from "../Modals/MarketModal";
 import {
   BoidsMetaStateContext,
-  ChatContext,
   defaultBoidsDisplayOptions,
   defaultBoidsTextOptions,
   MarketContext,
@@ -22,12 +21,9 @@ import {
 import { signIn, useSession } from "next-auth/react";
 import { useRouter } from "next/router";
 import TemporaryDrawer from "./Drawer";
+import ChatLayout from "./ChatLayout";
 
-export default function GameRoomLayout({
-  children,
-}: {
-  children: React.ReactNode;
-}) {
+export default function AppLayout({ children }: { children: React.ReactNode }) {
   const { data: session, status: sessionStatus } = useSession();
   const router = useRouter();
 
@@ -125,7 +121,7 @@ export default function GameRoomLayout({
             drawerOpen={drawerOpen}
             setDrawerOpen={setDrawerOpen}
           />
-          <ChatContext.Provider value={{ chat: { messages: [] } }}>
+          <ChatLayout>
             <MarketContext.Provider value={{ market: {} }}>
               <BoidsMetaStateContext.Provider
                 value={{
@@ -161,7 +157,7 @@ export default function GameRoomLayout({
                 <Box component="main">{children}</Box>
               </BoidsMetaStateContext.Provider>
             </MarketContext.Provider>
-          </ChatContext.Provider>
+          </ChatLayout>
         </>
       ) : (
         <LoadingOverlay visible />

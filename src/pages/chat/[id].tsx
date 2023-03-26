@@ -1,46 +1,15 @@
 import { useRouter } from "next/router";
 import React, { useEffect, useState } from "react";
-import io from "socket.io-client";
 import type { Socket } from "socket.io-client";
 import type {
   ClientToServerEvents,
   ServerToClientEvents,
 } from "../../../lib/Chat/types";
 import { Box, Container, TextField } from "@mui/material";
-import ChatMessage, { MessageData } from "../../components/Chat/Message";
+import ChatMessage from "../../components/Chat/Message";
+import type { MessageData } from "../../components/Chat/Message";
 import { faker } from "@faker-js/faker";
-
-const origin = () =>
-  typeof window !== "undefined"
-    ? window.location.origin
-    : "http://localhost:3000";
-
-async function socketInitializer(
-  chatId: string,
-  setAllMessages: React.Dispatch<React.SetStateAction<MessageData[]>>,
-  setSocket: React.Dispatch<
-    React.SetStateAction<Socket<
-      ServerToClientEvents,
-      ClientToServerEvents
-    > | null>
-  >
-) {
-  await fetch(`/api/chat/socket?chatId=${chatId}`);
-
-  const socket: Socket<ServerToClientEvents, ClientToServerEvents> = io();
-
-  console.log(`connected to ${chatId}`);
-
-  socket.on(
-    "receive-message",
-    (data: Parameters<ServerToClientEvents["receive-message"]>[0]) => {
-      setAllMessages((pre) => [...pre, data]);
-
-      console.log(`[Message] ${data.messageId}: ${data.text}`);
-    }
-  );
-  setSocket(socket);
-}
+import { socketInitializer } from "../../../lib/Chat/socketFunctions";
 
 const Home = () => {
   const router = useRouter();
@@ -65,6 +34,7 @@ const Home = () => {
     return () => {
       socket && socket.disconnect();
     };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [router.query.id]);
 
   function socketSubmit(e: React.FormEvent<HTMLFormElement>) {

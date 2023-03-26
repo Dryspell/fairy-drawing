@@ -1,10 +1,10 @@
 import ChatBox from "../../components/Chat/ChatBox";
-import GameRoomLayout from "../../components/Layout/GameRoomLayout";
+import AppLayout from "../../components/Layout/AppLayout";
 
 export default function ChatPage() {
   return (
-    <GameRoomLayout>
+    <AppLayout>
       <ChatBox roomId="test" />
-    </GameRoomLayout>
+    </AppLayout>
   );
 }

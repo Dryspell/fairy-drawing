@@ -34,7 +34,6 @@ export default function ChatMessage(props: {
   const { author, text, messageId, roomId, postedAt, replies } = props.message;
 
   const [isHovering, setIsHovering] = React.useState(false);
-  const [showReplies, setShowReplies] = React.useState(false);
   const [showReplyInputField, setShowReplyInputField] = React.useState(false);
 
   const [reply, setReply] = React.useState("");

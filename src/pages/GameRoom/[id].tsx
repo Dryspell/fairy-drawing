@@ -1,7 +1,7 @@
 import Head from "next/head";
 import React from "react";
 import GameRoom from "../../components/GameRoom/GameRoom";
-import GameRoomLayout from "../../components/Layout/GameRoomLayout";
+import AppLayout from "../../components/Layout/AppLayout";
 
 export default function GameRoomPage() {
   return (
@@ -11,9 +11,9 @@ export default function GameRoomPage() {
         <meta name="description" content="GameRoom" />
         <link rel="icon" href="/favicon.ico" />
       </Head>
-      <GameRoomLayout>
+      <AppLayout>
         <GameRoom />
-      </GameRoomLayout>
+      </AppLayout>
     </>
   );
 }
