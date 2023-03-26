@@ -1,6 +1,5 @@
 import { useContext, useEffect, useRef, useState } from "react";
 import { ScrollArea, Stack } from "@mantine/core";
-import { faker } from "@faker-js/faker";
 import ChatMessage from "./Message";
 import { Box, IconButton, TextField } from "@mui/material";
 import KeyboardDoubleArrowDownIcon from "@mui/icons-material/KeyboardDoubleArrowDown";
@@ -43,20 +42,7 @@ export default function ChatBox(props: { initialMessages?: MessageData[] }) {
 
     !props?.initialMessages?.length &&
       setMessages(
-        Array.from({ length: 10 }).map(() => {
-          return {
-            messageId: faker.datatype.uuid(),
-            roomId,
-            author: {
-              image: faker.internet.avatar(),
-              name: faker.internet.userName(),
-              username: faker.internet.email(),
-            },
-            postedAt: `${Math.floor(Math.random() * 60)} minutes ago`,
-            text: faker.lorem.paragraph(),
-            replies: [],
-          };
-        })
+        Array.from({ length: 10 }).map(() => createMessageFromPlainText("test"))
       );
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [props?.initialMessages?.length, roomId]);

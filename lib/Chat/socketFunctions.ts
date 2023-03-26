@@ -8,7 +8,7 @@ import type {
 import { faker } from "@faker-js/faker";
 import type { User } from "@prisma/client";
 
-export async function socketInitializer(
+export async function InitializeChatSocket(
   chatRoomId: string,
   setMessages: React.Dispatch<React.SetStateAction<MessageData[]>>,
   setSocket: React.Dispatch<
@@ -55,13 +55,32 @@ const origin = () =>
     ? window.location.origin
     : "http://localhost:3000";
 
-export const createMessageFromPlainText = (input: {
-  text: string;
-  roomId: string;
-  username?: string;
-  name?: string;
-  user?: User | null;
-}): MessageData => {
+export const createMessageFromPlainText = (
+  input:
+    | "test"
+    | {
+        text: string;
+        roomId: string;
+        username?: string;
+        name?: string;
+        user?: User | null;
+      }
+): MessageData => {
+  if (input === "test") {
+    return {
+      messageId: faker.datatype.uuid(),
+      roomId: faker.datatype.uuid(),
+      author: {
+        image: faker.internet.avatar(),
+        name: faker.internet.userName(),
+        username: faker.internet.email(),
+      },
+      postedAt: `${Math.floor(Math.random() * 60)} minutes ago`,
+      text: faker.lorem.paragraph(),
+      replies: [],
+    };
+  }
+
   const message: MessageData = {
     messageId: faker.datatype.uuid(),
     roomId: String(input.roomId),

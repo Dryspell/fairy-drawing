@@ -10,7 +10,7 @@ import { Box, Container, TextField } from "@mui/material";
 import ChatMessage from "../../components/Chat/Message";
 import {
   createMessageFromPlainText,
-  socketInitializer,
+  InitializeChatSocket,
   socketSubmitMessage,
 } from "../../../lib/Chat/socketFunctions";
 
@@ -30,9 +30,11 @@ const Home = () => {
     if (!router.query.id) return;
     console.log(router.query);
 
-    socketInitializer(router.query.id as string, setMessages, setSocket).catch(
-      (err) => console.log(err)
-    );
+    InitializeChatSocket(
+      router.query.id as string,
+      setMessages,
+      setSocket
+    ).catch((err) => console.log(err));
 
     return () => {
       socket && socket.disconnect();

@@ -4,7 +4,7 @@ import type {
   MessageData,
   ServerToClientEvents,
 } from "../../../lib/Chat/types";
-import { socketInitializer } from "../../../lib/Chat/socketFunctions";
+import { InitializeChatSocket } from "../../../lib/Chat/socketFunctions";
 import React from "react";
 import { useRouter } from "next/router";
 
@@ -34,9 +34,11 @@ export default function ChatLayout({
   React.useEffect(() => {
     if (!chatRoomId) return;
 
-    socketInitializer(router.query.id as string, setMessages, setSocket).catch(
-      (err) => console.log(err)
-    );
+    InitializeChatSocket(
+      router.query.id as string,
+      setMessages,
+      setSocket
+    ).catch((err) => console.log(err));
 
     return () => {
       socket && socket.disconnect();
