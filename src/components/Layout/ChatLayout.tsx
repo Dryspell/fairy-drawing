@@ -7,6 +7,7 @@ import type {
 import { InitializeChatSocket } from "../../../lib/Chat/socketFunctions";
 import React from "react";
 import { useRouter } from "next/router";
+import { faker } from "@faker-js/faker";
 
 export const ChatContext = React.createContext({
   socket: null as Socket<ServerToClientEvents, ClientToServerEvents> | null,
@@ -29,7 +30,14 @@ export default function ChatLayout({
   > | null>(null);
   const [messages, setMessages] = React.useState<MessageData[]>([]);
 
-  const chatRoomId = router.query.chatId;
+  const chatRoomId = router.query.chatId || faker.word.noun();
+
+  if (!router.query.chatId)
+    router
+      .push(`?chatId=${String(chatRoomId)}`, undefined, {
+        shallow: true,
+      })
+      .catch((e) => console.log(e));
 
   React.useEffect(() => {
     if (!chatRoomId) return;
