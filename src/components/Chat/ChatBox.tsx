@@ -2,41 +2,33 @@ import { useContext, useEffect, useRef, useState } from "react";
 import { ScrollArea, Stack } from "@mantine/core";
 import { faker } from "@faker-js/faker";
 import ChatMessage from "./Message";
-import type { MessageData } from "./Message";
 import { Box, IconButton, TextField } from "@mui/material";
 import KeyboardDoubleArrowDownIcon from "@mui/icons-material/KeyboardDoubleArrowDown";
-import { ChatContext } from "../Layout/ChatContext";
 import { useSession } from "next-auth/react";
+import type { MessageData } from "../../../lib/Chat/types";
+import { ChatContext } from "../Layout/ChatLayout";
+import {
+  createMessageFromPlainText,
+  socketSubmitMessage,
+} from "../../../lib/Chat/socketFunctions";
+import type { User } from "@prisma/client";
 
-export default function ChatBox(props: {
-  initialMessages?: MessageData[];
-  roomId: string;
-}) {
+export default function ChatBox(props: { initialMessages?: MessageData[] }) {
   const viewport = useRef<HTMLDivElement>(null);
   const { data: session } = useSession();
-  const {} = useContext(ChatContext);
+  const { socket, roomId, messages, setMessages } = useContext(ChatContext);
 
-  const [messages, setMessages] = useState<MessageData[]>([]);
-  const [chatMessage, setChatMessage] = useState("");
+  const [chatText, setChatText] = useState("");
 
   const handleChatSubmit = () => {
-    setMessages((pre) => [
-      ...pre,
-      {
-        messageId: faker.datatype.uuid(),
-        roomId: props.roomId,
-        text: chatMessage,
-        author: {
-          username: session?.user?.name || "Anonymous",
-          name: session?.user?.name || "Anonymous",
-          image: session?.user?.image || "",
-        },
-        postedAt: new Date().toLocaleDateString(),
-        replies: [],
-      },
-    ]);
-
-    setChatMessage("");
+    const message = createMessageFromPlainText({
+      text: chatText,
+      roomId,
+      user: session?.user as User,
+    });
+    setMessages((pre) => [...pre, message]);
+    socketSubmitMessage(socket, message);
+    setChatText("");
     scrollToBottom();
   };
 
@@ -54,7 +46,7 @@ export default function ChatBox(props: {
         Array.from({ length: 10 }).map(() => {
           return {
             messageId: faker.datatype.uuid(),
-            roomId: props.roomId,
+            roomId,
             author: {
               image: faker.internet.avatar(),
               name: faker.internet.userName(),
@@ -66,7 +58,8 @@ export default function ChatBox(props: {
           };
         })
       );
-  }, [props?.initialMessages?.length, props.roomId]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [props?.initialMessages?.length, roomId]);
 
   return (
     <div className="mt-0">
@@ -95,7 +88,7 @@ export default function ChatBox(props: {
               multiline
               maxRows={4}
               placeholder={`Chat...`}
-              onChange={(e) => setChatMessage(e.target.value)}
+              onChange={(e) => setChatText(e.target.value)}
               onKeyDown={(e) => {
                 if (e.key === "Enter" && !e.shiftKey) {
                   e.preventDefault();

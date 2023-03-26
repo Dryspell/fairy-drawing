@@ -1,13 +1,21 @@
 import type { Socket } from "socket.io-client";
 import type {
   ClientToServerEvents,
+  MessageData,
   ServerToClientEvents,
 } from "../../../lib/Chat/types";
 import { socketInitializer } from "../../../lib/Chat/socketFunctions";
 import React from "react";
 import { useRouter } from "next/router";
-import type { MessageData } from "../Chat/Message";
-import { ChatContext } from "./ChatContext";
+
+export const ChatContext = React.createContext({
+  socket: null as Socket<ServerToClientEvents, ClientToServerEvents> | null,
+  roomId: "",
+  messages: [] as MessageData[],
+  setMessages: (() => void 0) as React.Dispatch<
+    React.SetStateAction<MessageData[]>
+  >,
+});
 
 export default function ChatLayout({
   children,
@@ -21,8 +29,10 @@ export default function ChatLayout({
   > | null>(null);
   const [messages, setMessages] = React.useState<MessageData[]>([]);
 
+  const chatRoomId = router.query.chatId;
+
   React.useEffect(() => {
-    if (!router.query.id) return;
+    if (!chatRoomId) return;
 
     socketInitializer(router.query.id as string, setMessages, setSocket).catch(
       (err) => console.log(err)
@@ -32,10 +42,17 @@ export default function ChatLayout({
       socket && socket.disconnect();
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [router.query.id]);
+  }, [chatRoomId]);
 
   return (
-    <ChatContext.Provider value={{ chat: { messages } }}>
+    <ChatContext.Provider
+      value={{
+        socket,
+        roomId: String(chatRoomId),
+        messages,
+        setMessages,
+      }}
+    >
       {children}
     </ChatContext.Provider>
   );

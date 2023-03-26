@@ -1,8 +1,20 @@
 import type { NextApiResponse } from "next";
 import type { ServerOptions } from "socket.io";
-import { MessageData } from "../../src/components/Chat/Message";
 
 export type NextApiResponseWithSocket = NextApiResponse & SocketResponse;
+
+export type MessageData = {
+  messageId: string;
+  roomId: string;
+  postedAt: string;
+  text: string;
+  author: {
+    username: string;
+    name: string;
+    image: string;
+  };
+  replies: MessageData[];
+};
 
 type SocketResponse = {
   socket: {

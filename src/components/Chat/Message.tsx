@@ -8,21 +8,9 @@ import AddReactionIcon from "@mui/icons-material/AddReaction";
 import { Remark } from "react-remark";
 import { faker } from "@faker-js/faker";
 import { useSession } from "next-auth/react";
+import type { MessageData } from "../../../lib/Chat/types";
 
 const DEFAULT_REPLIES_TO_SHOW = 1;
-
-export type MessageData = {
-  messageId: string;
-  roomId: string;
-  postedAt: string;
-  text: string;
-  author: {
-    username: string;
-    name: string;
-    image: string;
-  };
-  replies: MessageData[];
-};
 
 export default function ChatMessage(props: {
   message: MessageData;
