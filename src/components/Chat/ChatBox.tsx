@@ -12,6 +12,9 @@ import {
 } from "../../../lib/Chat/socketFunctions";
 import type { User } from "@prisma/client";
 
+// const mode = "test";
+const mode: "test" | "normal" | "admin" = "normal";
+
 export default function ChatBox(props: { initialMessages?: MessageData[] }) {
   const viewport = useRef<HTMLDivElement>(null);
   const { data: session } = useSession();
@@ -40,7 +43,8 @@ export default function ChatBox(props: { initialMessages?: MessageData[] }) {
   useEffect(() => {
     scrollToBottom();
 
-    !props?.initialMessages?.length &&
+    mode === "test" &&
+      !props?.initialMessages?.length &&
       setMessages(
         Array.from({ length: 10 }).map(() => createMessageFromPlainText("test"))
       );
@@ -68,7 +72,6 @@ export default function ChatBox(props: { initialMessages?: MessageData[] }) {
         <Box sx={{ width: "100%" }}>
           <form className="flex-grow" onSubmit={handleChatSubmit}>
             <TextField
-              id="reply-input"
               label={`Chat...`}
               fullWidth
               multiline
