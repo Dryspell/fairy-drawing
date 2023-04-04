@@ -1,48 +1,48 @@
-import { TextField } from "@mui/material";
 import Container from "@mui/material/Container";
-import { Remark } from "react-remark";
+import TextField from "@mui/material/TextField";
+import LinearProgress from "@mui/material/LinearProgress";
+
 import React from "react";
+import { Remark } from "react-remark";
 import { api } from "../../utils/api";
-import { type inferRouterOutputs } from "@trpc/server";
-import { type AppRouter } from "../../server/api/root";
 
-export default function GPT_Test() {
+export default function Page() {
   const [chatText, setChatText] = React.useState("");
-  const [responses, setResponses] = React.useState<
-    inferRouterOutputs<AppRouter>["gpt"]["completion"][]
-  >([]);
+  const [chatQuery, setChatQuery] = React.useState("");
 
-  const sendChat = api.gpt.completion.useMutation({
-    onSuccess: (data) => {
-      setResponses((pre) => [...pre, data]);
-    },
-  });
+  const { data: responses, isLoading } = api.gpt.completion.useQuery(
+    { text: chatQuery },
+    { enabled: !!chatQuery, refetchOnWindowFocus: false }
+  );
 
   const handleChatSubmit = () => {
-    sendChat.mutate({ text: chatText });
+    setChatQuery(chatText);
     setChatText("");
   };
 
   return (
-    <Container>
-      {responses.length &&
-        responses.map((response, index) => (
-          <Remark key={index}>{response.choices?.[0]?.text || ""}</Remark>
-        ))}
-      <TextField
-        label={`Chat...`}
-        fullWidth
-        multiline
-        maxRows={4}
-        placeholder={`Chat...`}
-        onChange={(e) => setChatText(e.target.value)}
-        onKeyDown={(e) => {
-          if (e.key === "Enter" && !e.shiftKey) {
-            e.preventDefault();
-            handleChatSubmit();
-          }
-        }}
-      />
+    <Container className="p-10">
+      <Container>
+        {responses?.choices?.length &&
+          responses.choices.map((choice, index) => (
+            <Remark key={index}>{choice.text || ""}</Remark>
+          ))}
+        {isLoading && <LinearProgress />}
+        <TextField
+          label={`Chat...`}
+          fullWidth
+          multiline
+          maxRows={4}
+          placeholder={`Chat...`}
+          onChange={(e) => setChatText(e.target.value)}
+          onKeyDown={(e) => {
+            if (e.key === "Enter" && !e.shiftKey) {
+              e.preventDefault();
+              handleChatSubmit();
+            }
+          }}
+        />
+      </Container>
     </Container>
   );
 }

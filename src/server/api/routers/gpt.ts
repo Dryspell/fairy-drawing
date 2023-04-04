@@ -1,6 +1,6 @@
 import { z } from "zod";
 
-import { createTRPCRouter, publicProcedure, protectedProcedure } from "../trpc";
+import { createTRPCRouter, publicProcedure } from "../trpc";
 
 export type ChatGPTRequestOptions = {
   model: string;
@@ -44,24 +44,21 @@ const chatSampleData = {
 export const gptRouter = createTRPCRouter({
   completion: publicProcedure
     .input(z.object({ text: z.string() }))
-    .mutation(async ({ input }) => {
+    .query(async ({ input }) => {
       const requestOptions: ChatGPTRequestOptions = {
         model: "text-davinci-003",
         prompt: input.text,
         max_tokens: 100,
       };
 
-      const response = await fetch(
-        "https://api.openai.com/v1/engines/davinci/completions",
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${process.env.OPEN_AI_KEY || ""}`,
-          },
-          body: JSON.stringify(requestOptions),
-        }
-      )
+      const response = await fetch("https://api.openai.com/v1/completions", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${process.env.OPEN_AI_KEY || ""}`,
+        },
+        body: JSON.stringify(requestOptions),
+      })
         .then((res) => res.json())
         .then((res) => {
           return res as typeof chatSampleData;
