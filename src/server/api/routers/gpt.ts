@@ -64,6 +64,11 @@ export const gptRouter = createTRPCRouter({
           return res as typeof chatSampleData;
         });
 
+      // response &&
+      //   console.log(
+      //     `Received Response from GPT: ${response?.choices?.[0]?.text || ""}`
+      //   );
+
       return response;
     }),
 });

@@ -27,13 +27,14 @@ export default function Page() {
           responses.choices.map((choice, index) => (
             <Remark key={index}>{choice.text || ""}</Remark>
           ))}
-        {isLoading && <LinearProgress />}
+        {chatQuery && isLoading && <LinearProgress />}
         <TextField
           label={`Chat...`}
           fullWidth
           multiline
           maxRows={4}
           placeholder={`Chat...`}
+          value={chatText}
           onChange={(e) => setChatText(e.target.value)}
           onKeyDown={(e) => {
             if (e.key === "Enter" && !e.shiftKey) {
