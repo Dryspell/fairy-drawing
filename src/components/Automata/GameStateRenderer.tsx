@@ -10,13 +10,14 @@ export const GameStateRenderer = (props: {
 }) => {
   return (
     <>
-      {props.gameState.map((a, index) => {
-        a.x = (2 * a.radius + 5) * parseInt(String(a.x)) + BOARD_PADDING;
-        a.y = (2 * a.radius + 5) * parseInt(String(a.y)) + BOARD_PADDING;
+      {(props.gameState.current || []).map((a, index) => {
+        const b = { ...a };
+        b.x = (2 * b.radius + 5) * parseInt(String(b.x)) + BOARD_PADDING;
+        b.y = (2 * b.radius + 5) * parseInt(String(b.y)) + BOARD_PADDING;
         return (
           <AKonva
             key={index}
-            aState={a}
+            aState={b}
             helperOptions={props.helperOptions}
             textOptions={props.textOptions}
           />
