@@ -1,4 +1,4 @@
-import { Circle, Line, Text, Wedge } from "react-konva";
+import { Circle, Line, Rect, Text, Wedge } from "react-konva";
 import Konva from "konva";
 import type {
   Automata,
@@ -75,19 +75,34 @@ export const AKonva = (props: {
       {props.textOptions.show && (
         <SummaryText aState={props.aState} options={props.textOptions} />
       )}
-      <Wedge
-        x={props.aState.x}
-        y={props.aState.y}
-        fill={props.aState.color}
-        shadowBlur={5}
-        radius={40}
-        angle={props.aState.wedgeAngle}
-        rotation={props.aState.rotation}
-        onClick={() => {
-          props.aState.handleClick();
-          props.aState.color = Konva.Util.getRandomColor();
-        }}
-      />
+      {props.aState.shape === "wedge" ? (
+        <Wedge
+          x={props.aState.x}
+          y={props.aState.y}
+          fill={props.aState.color}
+          shadowBlur={5}
+          radius={40}
+          angle={props.aState.wedgeAngle}
+          rotation={props.aState.rotation}
+          onClick={() => {
+            props.aState.handleClick();
+            props.aState.color = Konva.Util.getRandomColor();
+          }}
+        />
+      ) : (
+        <Rect
+          x={props.aState.x}
+          y={props.aState.y}
+          fill={props.aState.color}
+          shadowBlur={5}
+          width={40}
+          height={40}
+          onClick={() => {
+            props.aState.handleClick();
+            props.aState.color = Konva.Util.getRandomColor();
+          }}
+        />
+      )}
       {props.helperOptions.showTarget && (
         <ATarget
           x={props.aState.target.x}

@@ -29,6 +29,7 @@ export const initialBoidState = (
     name: faker.name.firstName(),
     x: randomXPos(boundaries),
     y: randomYPos(boundaries),
+    shape: "wedge",
     rotation: computeRotation(initialDirection),
     direction: initialDirection,
     speed: 1,

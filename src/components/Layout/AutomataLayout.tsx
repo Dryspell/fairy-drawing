@@ -12,6 +12,7 @@ import MenuIcon from "@mui/icons-material/Menu";
 import { signIn, useSession } from "next-auth/react";
 import { useRouter } from "next/router";
 import TemporaryDrawer from "./Drawer";
+import { AMetaStateContext } from "./AutomataContext";
 
 export default function AutomataLayout({
   children,
@@ -27,6 +28,9 @@ export default function AutomataLayout({
   const [openMarketModal, setOpenMarketModal] = useState(false);
 
   const [drawerOpen, setDrawerOpen] = React.useState(false);
+
+  const [aDisplayOptions, setADisplayOptions] = useState([] as string[]);
+  const [aTextOptions, setATextOptions] = useState([] as string[]);
 
   return (
     <Container fluid className="p-10">
@@ -59,7 +63,7 @@ export default function AutomataLayout({
               sx={{ color: "#fff" }}
               startIcon={frameTime.paused ? <CiPlay1 /> : <CiPause1 />}
             >
-              <Timer frameTime={frameTime} />
+              <Timer frameTime={frameTime} showFrameCount />
             </Button>
             <Box sx={{ flexGrow: 1 }} />
             <Box sx={{ display: { xs: "none", sm: "block" } }}>
@@ -101,7 +105,17 @@ export default function AutomataLayout({
         </AppBar>
       </>
       <TemporaryDrawer drawerOpen={drawerOpen} setDrawerOpen={setDrawerOpen} />
-      <Box component="main">{children}</Box>
+      <AMetaStateContext.Provider
+        value={{
+          frameTime,
+          aDisplayOptions,
+          setADisplayOptions,
+          aTextOptions,
+          setATextOptions,
+        }}
+      >
+        <Box component="main">{children}</Box>
+      </AMetaStateContext.Provider>
     </Container>
   );
 }

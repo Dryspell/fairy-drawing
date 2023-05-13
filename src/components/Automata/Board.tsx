@@ -1,10 +1,31 @@
 import dynamic from "next/dynamic";
 import React, { useContext, useState } from "react";
-import type { GameStageProps } from "../Boids/GameStage";
 import { useAutomataState } from "../../../lib/hooks/useAutomataState";
 import { AMetaStateContext } from "../Layout/AutomataContext";
+import { type StageBoundaries } from "../../../lib/automataTypes";
+import { type AutomataStageProps } from "./AutomataStage";
 
-const AutomataNoSSR = dynamic<GameStageProps>(import("../Boids/GameStage"), {
+export const BOARD_PADDING = 50;
+
+export const COLUMN_COUNT = (
+  boundaries: StageBoundaries,
+  padding: number,
+  radius: number
+) =>
+  Math.floor(
+    (boundaries.x1 - boundaries.x0 - 2 * BOARD_PADDING) / (2 * radius + 5)
+  ) - 1;
+
+export const ROW_COUNT = (
+  boundaries: StageBoundaries,
+  padding: number,
+  radius: number
+) =>
+  Math.floor(
+    (boundaries.y1 - boundaries.y0 - 2 * BOARD_PADDING) / (2 * radius + 5)
+  ) - 1;
+
+const AutomataNoSSR = dynamic<AutomataStageProps>(import("./AutomataStage"), {
   loading: () => (
     <>
       <div className="flex h-full w-full items-center justify-center">
@@ -37,13 +58,13 @@ export default function Board() {
   }
 
   const [stageBoundaries, setStageBoundaries] = React.useState(
-    initialStageBoundaries
+    initialStageBoundaries as StageBoundaries
   );
 
   const gameState = useAutomataState(
     {
-      count: 10,
-      behavior: "seekTarget",
+      count: 100,
+      behavior: "GameOfLife",
     },
     frameTime,
     stageBoundaries

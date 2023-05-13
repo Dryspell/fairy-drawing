@@ -6,9 +6,12 @@ export type StageBoundaries = {
 };
 
 export interface Automata<T = unknown> {
+  id: string | number;
   name: string;
   x: number;
   y: number;
+  shape: "wedge" | "square";
+  radius: number;
   rotation: number;
   direction: number;
   speed: number;
