@@ -1,15 +1,15 @@
 import dynamic from "next/dynamic";
 import React, { useContext, useState } from "react";
-import { useBoidFlock } from "../../../lib/hooks/useBoidFlock";
 import type { GameStageProps } from "../Boids/GameStage";
-import { BoidsMetaStateContext } from "../Layout/GameRoomContext";
+import { useAutomataState } from "../../../lib/hooks/useAutomataState";
+import { AMetaStateContext } from "../Layout/AutomataContext";
 
-const BoidsNoSSR = dynamic<GameStageProps>(import("../Boids/GameStage"), {
+const AutomataNoSSR = dynamic<GameStageProps>(import("../Boids/GameStage"), {
   loading: () => (
     <>
       <div className="flex h-full w-full items-center justify-center">
         <h1 className="text-center text-2xl font-semibold text-blue-500">
-          Loading Boids ....
+          Loading Automata ....
         </h1>
       </div>
     </>
@@ -19,12 +19,11 @@ const BoidsNoSSR = dynamic<GameStageProps>(import("../Boids/GameStage"), {
 
 const INITIAL_STAGE_DIM = 1000;
 
-export default function GameRoom() {
+export default function Board() {
   // console.log("GameRoom Rendered");
 
-  const { frameTime, boidsDisplayOptions, boidsTextOptions } = useContext(
-    BoidsMetaStateContext
-  );
+  const { frameTime, aDisplayOptions, aTextOptions } =
+    useContext(AMetaStateContext);
 
   const initialStageBoundaries = {
     x0: 0,
@@ -41,7 +40,7 @@ export default function GameRoom() {
     initialStageBoundaries
   );
 
-  const flockState = useBoidFlock(
+  const gameState = useAutomataState(
     {
       count: 10,
       behavior: "seekTarget",
@@ -88,21 +87,21 @@ export default function GameRoom() {
 
       {!loading && valid && (
         <>
-          <BoidsNoSSR
+          <AutomataNoSSR
             stageBoundaries={stageBoundaries}
             setStageBoundaries={setStageBoundaries}
-            gameState={flockState}
+            gameState={gameState}
             helperOptions={{
-              showShortestDistanceLines: boidsDisplayOptions.includes(
+              showShortestDistanceLines: aDisplayOptions.includes(
                 "showShortestDistanceLines"
               ),
-              showTarget: boidsDisplayOptions.includes("showTarget"),
+              showTarget: aDisplayOptions.includes("showTarget"),
             }}
             textOptions={{
-              show: boidsTextOptions.includes("showText"),
-              showAngles: boidsTextOptions.includes("showAngles"),
-              showNames: boidsTextOptions.includes("showNames"),
-              showScores: boidsTextOptions.includes("showScores"),
+              show: aTextOptions.includes("showText"),
+              showAngles: aTextOptions.includes("showAngles"),
+              showNames: aTextOptions.includes("showNames"),
+              showScores: aTextOptions.includes("showScores"),
             }}
           />
         </>

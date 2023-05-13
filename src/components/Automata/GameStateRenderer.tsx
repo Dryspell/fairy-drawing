@@ -1,18 +1,18 @@
 import React from "react";
-import { AKonva } from "./AKonva";
-import type { useBoidFlock } from "../../../lib/hooks/useBoidFlock";
+import { AKonva } from "../Boids/AKonva";
+import { type useAutomataState } from "../../../lib/hooks/useAutomataState";
 
-export const Flock = (props: {
-  flockState: ReturnType<typeof useBoidFlock>;
+export const GameStateRenderer = (props: {
+  gameState: ReturnType<typeof useAutomataState>;
   helperOptions: Parameters<typeof AKonva>[0]["helperOptions"];
   textOptions: Parameters<typeof AKonva>[0]["textOptions"];
 }) => {
   return (
     <>
-      {props.flockState.map((boid, index) => (
+      {props.gameState.map((cell, index) => (
         <AKonva
           key={index}
-          aState={boid}
+          aState={cell}
           helperOptions={props.helperOptions}
           textOptions={props.textOptions}
         />

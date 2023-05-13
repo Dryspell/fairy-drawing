@@ -3,7 +3,7 @@ import React, { useEffect } from "react";
 import type { useFrameTime } from "./useFrameTime";
 import type { StageBoundaries } from "../automataTypes";
 
-export type FlockProps = {
+export type cellProps = {
   count: number;
   behavior: string;
   helperOptions?: {
@@ -16,15 +16,15 @@ export type FlockProps = {
   };
 };
 
-export const useBoidFlock = (
-  flockProps: FlockProps,
+export const useAutomataState = (
+  cellProps: cellProps,
   frameTime: ReturnType<typeof useFrameTime>,
   boundaries: StageBoundaries
 ) => {
   const { frameCount, delta } = frameTime;
   const [flockState, setFlockState] = React.useState(
-    [...Array(flockProps.count).keys()].map((index) =>
-      initialBoidState(index, boundaries, flockProps.behavior)
+    [...Array(cellProps.count).keys()].map((index) =>
+      initialBoidState(index, boundaries, cellProps.behavior)
     )
   );
 

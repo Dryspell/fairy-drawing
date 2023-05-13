@@ -1,18 +1,18 @@
 import React, { useEffect, useState } from "react";
 import { Stage, Layer } from "react-konva";
-import type { StageBoundaries } from "../../../lib/boidTypes";
-import type { BoidKonva } from "./Boid";
+import type { StageBoundaries } from "../../../lib/automataTypes";
+import type { AKonva } from "./AKonva";
 import { Flock } from "./flock";
 
-export type BoidsStageProps = {
+export type GameStageProps = {
   stageBoundaries: StageBoundaries;
   setStageBoundaries: React.Dispatch<React.SetStateAction<StageBoundaries>>;
-  flockState: Parameters<typeof Flock>[0]["flockState"];
-  helperOptions: Parameters<typeof BoidKonva>[0]["helperOptions"];
-  textOptions: Parameters<typeof BoidKonva>[0]["textOptions"];
+  gameState: Parameters<typeof Flock>[0]["flockState"];
+  helperOptions: Parameters<typeof AKonva>[0]["helperOptions"];
+  textOptions: Parameters<typeof AKonva>[0]["textOptions"];
 };
 
-function BoidsStage(props: BoidsStageProps) {
+function GameStage(props: GameStageProps) {
   const [width, setWidth] = useState<number>(
     props.stageBoundaries.x1 - props.stageBoundaries.x0 || window.innerWidth
   );
@@ -67,7 +67,7 @@ function BoidsStage(props: BoidsStageProps) {
       <Stage width={width} height={height}>
         <Layer>
           <Flock
-            flockState={props.flockState}
+            flockState={props.gameState}
             helperOptions={props.helperOptions}
             textOptions={props.textOptions}
           />
@@ -77,4 +77,4 @@ function BoidsStage(props: BoidsStageProps) {
   );
 }
 
-export default BoidsStage;
+export default GameStage;

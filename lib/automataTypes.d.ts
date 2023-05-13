@@ -5,7 +5,7 @@ export type StageBoundaries = {
   y1: number;
 };
 
-export type Boid = {
+export interface Automata<T = unknown> {
   name: string;
   x: number;
   y: number;
@@ -30,8 +30,9 @@ export type Boid = {
   angleToTarget: number;
   score: number;
   behavior: string;
+  state?: T;
   handleClick: () => void;
-};
+}
 
 export type HelperOptions = {
   showShortestDistanceLines: boolean;

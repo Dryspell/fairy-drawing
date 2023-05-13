@@ -1,6 +1,6 @@
-import type { Boid, StageBoundaries } from "./boidTypes";
+import type { Automata, StageBoundaries } from "../automataTypes";
 
-export function computeRotation(direction: number, boid?: Boid) {
+export function computeRotation(direction: number, boid?: Automata) {
   // 0 is east, 90 is south, 180 is west, 270 is north
   const rotation = direction - (boid?.wedgeAngle || 40) / 2 + 180;
   return rotation;
@@ -41,7 +41,7 @@ export function getStageWidth(boundaries: StageBoundaries) {
 }
 
 export const computeTorusPositions = (
-  boidState: Boid,
+  boidState: Automata,
   boundaries: StageBoundaries
 ) => {
   const { x, y, target } = boidState;
