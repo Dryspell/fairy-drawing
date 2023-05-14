@@ -9,21 +9,19 @@ export const BOARD_PADDING = 50;
 
 export const COLUMN_COUNT = (
   boundaries: StageBoundaries,
-  padding: number,
-  radius: number
+  padding = BOARD_PADDING,
+  radius = 20
 ) =>
-  Math.floor(
-    (boundaries.x1 - boundaries.x0 - 2 * BOARD_PADDING) / (2 * radius + 5)
-  ) - 1;
+  Math.floor((boundaries.x1 - boundaries.x0 - 2 * padding) / (2 * radius + 5)) -
+  1;
 
 export const ROW_COUNT = (
   boundaries: StageBoundaries,
   padding: number,
   radius: number
 ) =>
-  Math.floor(
-    (boundaries.y1 - boundaries.y0 - 2 * BOARD_PADDING) / (2 * radius + 5)
-  ) - 1;
+  Math.floor((boundaries.y1 - boundaries.y0 - 2 * padding) / (2 * radius + 5)) -
+  1;
 
 const AutomataNoSSR = dynamic<AutomataStageProps>(import("./AutomataStage"), {
   loading: () => (

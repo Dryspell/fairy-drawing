@@ -11,13 +11,16 @@ import {
   behaviorTable,
   type TransitionTable,
 } from "../hooks/useAutomataState";
+import { randomInt } from "mathjs";
 
 export const initialAutomataState = (
-  id: string | number,
-  behavior: string,
+  iState: Partial<Automata<{ id: string }>>,
   boundaries: StageBoundaries
 ): Automata<{ id: string }> => {
   const radius = 20;
+
+  const id = iState.id || String(randomInt(0, 1000000));
+  const state = { id: "1" };
 
   const a = {
     id,
@@ -37,7 +40,7 @@ export const initialAutomataState = (
     speed: 0,
     acceleration: 0,
     wedgeAngle: 0,
-    color: "black",
+    color: state ? "black" : "white",
     target: {
       x: 0,
       y: 0,
@@ -52,8 +55,10 @@ export const initialAutomataState = (
     },
     angleToTarget: 0,
     score: 0,
-    behavior: behavior || "seekTarget",
+    behavior: iState.behavior || "random",
+    state,
     handleClick: () => void 0,
+    ...iState,
   };
   a.handleClick = () => {
     console.log(`Clicked ${a.name} (${a.x}, ${a.y})`);
@@ -71,11 +76,14 @@ export const initialGameState = (
 ) => {
   const initialGameState = [
     ...[...Array(count ? count : 0).keys()].map((x, index) => {
-      return initialAutomataState(index, behavior, boundaries);
+      return initialAutomataState(
+        { id: index, behavior, state: { id: "1" } },
+        boundaries
+      );
     }),
   ];
 
-  console.log(`Created Initial GameState`, initialGameState);
+  // console.log(`Created Initial GameState`, initialGameState);
 
   return initialGameState;
 };
@@ -87,14 +95,53 @@ export const updateGameState = (
 ) => {
   if (!gameState.current) throw new Error(`Null gameState Supplied`);
 
-  const getNeighbors = (a: Automata<{ id: string }>) =>
-    gameState.current?.filter((automata) => {
-      return (
-        a.id !== automata.id &&
-        Math.abs(a.x - automata.x) < 1.5 &&
-        Math.abs(a.y - automata.y) < 1.5
-      );
-    }) || [];
+  const getNeighbors = (
+    a: NonNullable<ReturnType<typeof useAutomataState>["current"]>[0],
+    gameState: NonNullable<ReturnType<typeof useAutomataState>["current"]>,
+    neighborhoodRadius = 1.5
+  ) => {
+    const mooreNeighborhood = (a: Automata, radius = neighborhoodRadius) => {
+      const neighborhood = [] as { x: number; y: number }[];
+      for (let i = 1; i < radius; i++) {
+        const neighbors = [
+          { x: a.x - i, y: a.y - i },
+          { x: a.x - i, y: a.y },
+          { x: a.x - i, y: a.y + i },
+          { x: a.x, y: a.y - i },
+          { x: a.x, y: a.y + i },
+          { x: a.x + i, y: a.y - i },
+          { x: a.x + i, y: a.y },
+          { x: a.x + i, y: a.y + i },
+        ];
+        neighborhood.push(...neighbors);
+      }
+      return neighborhood;
+    };
+
+    const mooreNbhd = mooreNeighborhood(a);
+    // console.log(
+    //   `MooreNeighborhood: ${mooreNbhd.length}, sample: ${JSON.stringify(
+    //     mooreNbhd[0]
+    //   )}`
+    // );
+
+    return mooreNbhd.map((n) => {
+      const neighbor =
+        gameState?.find((automata) => automata.x == n.x && automata.y == n.y) ||
+        initialAutomataState(
+          {
+            id: `${n.x}_${n.y}`,
+            behavior: aStateProps?.behavior,
+            state: { id: "0" },
+            x: n.x,
+            y: n.y,
+          },
+          boundaries
+        );
+
+      return neighbor;
+    });
+  };
 
   // console.log(`GameState1`, gameState.current);
 
@@ -103,24 +150,40 @@ export const updateGameState = (
       aStateProps?.behavior || Object.keys(behaviorTable)[0] || ""
     ] || {};
 
-  const newState: Record<string, Automata<{ id: string }>> = Object.fromEntries(
-    gameState.current.map((a) => [`${a.x}_${a.y}`, a])
-  );
+  const newState: Record<string, Automata<{ id: string }>> = {};
 
   for (const a of gameState.current) {
-    const neighbors = getNeighbors(a);
+    const neighbors = getNeighbors(a, gameState.current);
 
     for (const n of [...neighbors, a]) {
-      if (newState[`${n.x}_${n.y}`]) continue;
-      const neighborsOfNeighbor = getNeighbors(n);
-      const transitionValue = `${8 - neighborsOfNeighbor.length}${
-        neighborsOfNeighbor.length
+      if (newState[`${n.x}_${n.y}`]) {
+        console.log(`State for (${n.x}, ${n.y}) already computed`);
+        continue;
+      }
+      const neighborsOfNeighbor = getNeighbors(n, gameState.current);
+
+      const transitionValue = `${
+        neighborsOfNeighbor.filter((non) => !non.state || non.state?.id == "0")
+          .length
+      }${
+        neighborsOfNeighbor.filter((non) => non.state && non.state?.id == "1")
+          .length
       }`;
-      console.log(`Automata (${n.x}, ${n.y}): transition: ${transitionValue}`);
+
       const transition = transitionTable[transitionValue];
+
+      console.log(
+        `Automata (${n.x}, ${n.y}); state: ${JSON.stringify(
+          a.state
+        )}; transitionValue: ${transitionValue}; transition: ${String(
+          transition
+        )}`
+      );
+
       if (transition)
         newState[`${n.x}_${n.y}`] = {
-          ...initialAutomataState(`${n.x}_${n.y}`, "GameOfLife", boundaries),
+          ...n,
+          state: { id: transition },
         };
     }
   }
