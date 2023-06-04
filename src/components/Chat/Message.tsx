@@ -8,7 +8,7 @@ import AddReactionIcon from "@mui/icons-material/AddReaction";
 import { Remark } from "react-remark";
 import { faker } from "@faker-js/faker";
 import { useSession } from "next-auth/react";
-import { Message, User } from "@prisma/client";
+import { type Message, type User } from "@prisma/client";
 
 const DEFAULT_REPLIES_TO_SHOW = 1;
 
@@ -17,7 +17,12 @@ export default function ChatMessage(props: {
   messages: Message[];
   setMessages: React.Dispatch<React.SetStateAction<Message[]>>;
 }) {
-  const { data: session } = useSession();
+  const { data: session } = useSession({
+    required: false,
+    onUnauthenticated: () => {
+      console.log(`You're not logged in!`);
+    },
+  });
 
   const { text, messageId, roomId } = props.message;
 

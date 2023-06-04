@@ -9,7 +9,7 @@ import { GoGraph } from "react-icons/go";
 import { useFrameTime } from "../../../lib/hooks/useFrameTime";
 import Timer from "../Stopwatch/Stopwatch";
 import MenuIcon from "@mui/icons-material/Menu";
-import { signIn, useSession } from "next-auth/react";
+import { useSession } from "next-auth/react";
 import { useRouter } from "next/router";
 import TemporaryDrawer from "./Drawer";
 import { AMetaStateContext } from "./AutomataContext";

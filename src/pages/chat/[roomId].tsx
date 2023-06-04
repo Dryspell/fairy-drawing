@@ -6,6 +6,7 @@ import { type Room, type Message, User } from "@prisma/client";
 import { createMessageFromPlainText } from "../../../lib/Chat/utils";
 import { api } from "../../utils/api";
 import { pusherClient } from "../../../lib/pusher";
+import { useSession } from "next-auth/react";
 // import {
 //   InitializeChatSocket,
 //   socketSubmitMessage,
@@ -17,6 +18,9 @@ import { pusherClient } from "../../../lib/pusher";
 // } from "../../../lib/Chat/types";
 
 const Home = () => {
+  const { data: session } = useSession({
+    required: false,
+  });
   const router = useRouter();
 
   const [chatMessage, setChatMessage] = useState("");
@@ -26,7 +30,9 @@ const Home = () => {
   const bottomRef = useRef<HTMLDivElement>(null);
 
   const [room, setRoom] = useState<Room | null>(null);
-  const [user, setUser] = useState<User | null>(null);
+  const [user, setUser] = useState<User | null>(
+    (session?.user as User) || null
+  );
 
   useEffect(() => {
     console.log("useEffect Setup Pusher Chat Socket");
@@ -38,6 +44,7 @@ const Home = () => {
       pusherClient.unsubscribe(String(router.query.roomId));
       pusherClient.unbind("messages:new");
     };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [router.query.roomId]);
 
   const getOrCreateRoom = api.chat.getOrCreateRoom.useQuery(
@@ -113,6 +120,8 @@ const Home = () => {
               text: chatMessage,
               roomId: String(router.query.roomId),
               username,
+              name: user?.username || "Unknown User",
+              user: user || undefined,
             });
 
             console.log(`Sending message`, message);

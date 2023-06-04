@@ -1,6 +1,5 @@
-import { Message, User } from "@prisma/client";
+import { type Message, type User } from "@prisma/client";
 import { faker } from "@faker-js/faker";
-import { createId } from "@paralleldrive/cuid2";
 import cuid from "cuid";
 
 export const createMessageFromPlainText = (

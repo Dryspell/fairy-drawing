@@ -4,7 +4,6 @@ import type { ServerOptions } from "socket.io";
 import type {
   ClientToServerEvents,
   InterServerEvents,
-  Message,
   NextApiResponseWithSocket,
   ServerToClientEvents,
 } from "../../../../lib/Chat/types";

@@ -7,7 +7,7 @@ import { InitializeChatSocket } from "../../../lib/Chat/socketFunctions";
 import React from "react";
 import { useRouter } from "next/router";
 import { faker } from "@faker-js/faker";
-import { Message } from "@prisma/client";
+import { type Message } from "@prisma/client";
 
 export const ChatContext = React.createContext({
   socket: null as Socket<ServerToClientEvents, ClientToServerEvents> | null,

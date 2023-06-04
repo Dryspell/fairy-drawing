@@ -1,4 +1,4 @@
-import { Message } from "@prisma/client";
+import { type Message } from "@prisma/client";
 import type { NextApiResponse } from "next";
 import type { ServerOptions } from "socket.io";
 
