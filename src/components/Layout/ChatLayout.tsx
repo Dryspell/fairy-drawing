@@ -1,16 +1,16 @@
-import type { Socket } from "socket.io-client";
-import type {
-  ClientToServerEvents,
-  ServerToClientEvents,
-} from "../../../lib/Chat/types";
-import { InitializeChatSocket } from "../../../lib/Chat/socketFunctions";
+// import type { Socket } from "socket.io-client";
+// import type {
+//   ClientToServerEvents,
+//   ServerToClientEvents,
+// } from "../../../lib/Chat/types";
+// import { InitializeChatSocket } from "../../../lib/Chat/socketFunctions";
 import React from "react";
 import { useRouter } from "next/router";
 import { faker } from "@faker-js/faker";
 import { type Message } from "@prisma/client";
 
 export const ChatContext = React.createContext({
-  socket: null as Socket<ServerToClientEvents, ClientToServerEvents> | null,
+  // socket: null as Socket<ServerToClientEvents, ClientToServerEvents> | null,
   roomId: "",
   messages: [] as Message[],
   setMessages: (() => void 0) as React.Dispatch<
@@ -24,40 +24,52 @@ export default function ChatLayout({
   children: React.ReactNode;
 }) {
   const router = useRouter();
-  const [socket, setSocket] = React.useState<Socket<
-    ServerToClientEvents,
-    ClientToServerEvents
-  > | null>(null);
+  // const [socket, setSocket] = React.useState<Socket<
+  //   ServerToClientEvents,
+  //   ClientToServerEvents
+  // > | null>(null);
   const [messages, setMessages] = React.useState<Message[]>([]);
 
   const chatRoomId = router.query.chatId || faker.word.noun();
-
-  if (!router.query.chatId)
+  if (!router.query.chatId) {
     router
-      .push(`?chatId=${String(chatRoomId)}`, undefined, {
-        shallow: true,
-      })
+      .replace(
+        {
+          pathname: router.pathname,
+          query: { ...router.query, chatId: chatRoomId },
+        },
+        undefined,
+        {
+          shallow: true,
+        }
+      )
       .catch((e) => console.log(e));
+  }
 
-  React.useEffect(() => {
-    if (!chatRoomId) return;
+  // .push(`?chatId=${String(chatRoomId)}`, undefined, {
+  //   shallow: true,
+  // })
+  // .catch((e) => console.log(e));
 
-    InitializeChatSocket(
-      router.query.id as string,
-      setMessages,
-      setSocket
-    ).catch((err) => console.log(err));
+  // React.useEffect(() => {
+  //   if (!chatRoomId) return;
 
-    return () => {
-      socket && socket.disconnect();
-    };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [chatRoomId]);
+  //   InitializeChatSocket(
+  //     router.query.id as string,
+  //     setMessages,
+  //     setSocket
+  //   ).catch((err) => console.log(err));
+
+  //   return () => {
+  //     socket && socket.disconnect();
+  //   };
+  //   // eslint-disable-next-line react-hooks/exhaustive-deps
+  // }, [chatRoomId]);
 
   return (
     <ChatContext.Provider
       value={{
-        socket,
+        // socket,
         roomId: String(chatRoomId),
         messages,
         setMessages,

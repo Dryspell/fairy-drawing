@@ -80,6 +80,14 @@ export const chatRouter = createTRPCRouter({
         //   userId: z.string(),
         // }),
         message: MessageSchema,
+        user: z
+          .object({
+            id: z.string().optional(),
+            username: z.string().optional(),
+            email: z.string().optional(),
+            name: z.string().optional(),
+          })
+          .optional(),
       })
     )
     .mutation(async ({ input, ctx }) => {
@@ -113,7 +121,16 @@ export const chatRouter = createTRPCRouter({
                   },
                   create: {
                     id: message.userId,
-                    name: message.userId.slice(-5),
+                    name: input.user?.name || message.userId.slice(-5),
+                    username: input.user?.username || message.userId.slice(-5),
+                    email:
+                      input.user?.email ||
+                      `${message.userId.slice(-5) || "unknown"}@example.com`,
+                    rooms: {
+                      connect: {
+                        roomId: message.roomId,
+                      },
+                    },
                   },
                 },
               },

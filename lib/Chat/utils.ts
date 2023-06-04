@@ -10,9 +10,9 @@ export const createMessageFromPlainText = (
         roomId: string;
         username?: string;
         name?: string;
-        user?: User;
+        user?: Partial<User>;
       }
-): Message & { user: User; replies: Message[] } => {
+): Message & { user?: Partial<User>; replies: Message[] } => {
   const defaultMessage = (userId = faker.datatype.uuid()) => {
     return {
       messageId: cuid(),

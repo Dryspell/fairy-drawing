@@ -24,13 +24,12 @@ const Home = () => {
   const router = useRouter();
 
   const [chatMessage, setChatMessage] = useState("");
-  const [username, setUsername] = useState("");
   const [messages, setMessages] = useState<Message[]>([]);
 
   const bottomRef = useRef<HTMLDivElement>(null);
 
   const [room, setRoom] = useState<Room | null>(null);
-  const [user, setUser] = useState<User | null>(
+  const [user, setUser] = useState<Partial<User> | null>(
     (session?.user as User) || null
   );
 
@@ -47,7 +46,7 @@ const Home = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [router.query.roomId]);
 
-  const getOrCreateRoom = api.chat.getOrCreateRoom.useQuery(
+  const { isLoading: roomLoading } = api.chat.getOrCreateRoom.useQuery(
     { roomId: String(router.query.roomId) },
     {
       enabled: Boolean(router.query.roomId),
@@ -62,8 +61,27 @@ const Home = () => {
     }
   );
 
-  const { mutate: createOrUpdate } = api.chat.createOrUpdateMessage.useMutation(
+  const { isLoading: userLoading } = api.account.upsertUser.useQuery(
     {
+      username: user?.username ? String(user?.username) : "",
+      roomId: room?.id || "",
+    },
+    {
+      enabled: user?.username && room?.id ? true : false,
+      onSuccess: (newUser: Partial<User>) => {
+        if (!newUser) return;
+        console.log(
+          newUser.id !== user?.id
+            ? `newUser: ${String(newUser.id)}`
+            : `Existing User: ${String(user!.id)}`
+        );
+        newUser && setUser(newUser);
+      },
+    }
+  );
+
+  const { mutate: createOrUpdateMessage } =
+    api.chat.createOrUpdateMessage.useMutation({
       onMutate: ({ message }) => {
         // Optimistic Update
         !messages.find((m) => m.messageId === message.messageId) &&
@@ -83,8 +101,7 @@ const Home = () => {
         updatedConversation.messages &&
           setMessages(updatedConversation.messages);
       },
-    }
-  );
+    });
 
   const { mutate: seen } = api.chat.seen.useMutation();
 
@@ -92,7 +109,10 @@ const Home = () => {
     if (!messages.find((m) => m.messageId === message.messageId)) {
       console.log(`Received new message: ${message.text}`);
       setMessages([...messages, message]);
-      seen({ messageId: message.messageId, username });
+      seen({
+        messageId: message.messageId,
+        username: user?.username || "Anonymous",
+      });
     }
   };
 
@@ -101,8 +121,11 @@ const Home = () => {
       <TextField
         name="username"
         placeholder="Username"
-        value={username}
-        onChange={(e) => setUsername(e.target.value)}
+        value={user?.username}
+        onChange={(e) => {
+          "User: onChange username";
+          setUser((user) => ({ ...user, username: e.currentTarget.value }));
+        }}
       />
       <Box>
         {messages.map((message, index) => (
@@ -119,14 +142,17 @@ const Home = () => {
             const message = createMessageFromPlainText({
               text: chatMessage,
               roomId: String(router.query.roomId),
-              username,
+              username: user?.username || "Anonymous",
               name: user?.username || "Unknown User",
               user: user || undefined,
             });
 
             console.log(`Sending message`, message);
 
-            createOrUpdate({ message });
+            createOrUpdateMessage({
+              message,
+              user: { username: message?.user?.username || undefined },
+            });
             // socketSubmitMessage(socket, message);
             setChatMessage("");
           }}

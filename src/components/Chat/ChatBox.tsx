@@ -5,7 +5,7 @@ import { Box, IconButton, TextField } from "@mui/material";
 import KeyboardDoubleArrowDownIcon from "@mui/icons-material/KeyboardDoubleArrowDown";
 import { useSession } from "next-auth/react";
 import { ChatContext } from "../Layout/ChatLayout";
-import { socketSubmitMessage } from "../../../lib/Chat/socketFunctions";
+// import { socketSubmitMessage } from "../../../lib/Chat/socketFunctions";
 import type { Message, User } from "@prisma/client";
 import { createMessageFromPlainText } from "../../../lib/Chat/utils";
 
@@ -15,7 +15,12 @@ export const mode: "test" | "normal" | "admin" = "normal";
 export default function ChatBox(props: { initialMessages?: Message[] }) {
   const viewport = useRef<HTMLDivElement>(null);
   const { data: session } = useSession();
-  const { socket, roomId, messages, setMessages } = useContext(ChatContext);
+  const {
+    // socket,
+    roomId,
+    messages,
+    setMessages,
+  } = useContext(ChatContext);
 
   const [chatText, setChatText] = useState("");
 
@@ -26,7 +31,7 @@ export default function ChatBox(props: { initialMessages?: Message[] }) {
       user: session?.user as User,
     });
     setMessages((pre) => [...pre, message]);
-    socketSubmitMessage(socket, message);
+    // socketSubmitMessage(socket, message);
     setChatText("");
     scrollToBottom();
   };

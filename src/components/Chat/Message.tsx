@@ -92,7 +92,11 @@ export default function ChatMessage(props: {
       <div className="relative flex-shrink-0">
         <Avatar
           src={props.message.user?.image}
-          alt={props.message.user?.name || props.message.user?.id}
+          alt={
+            props.message.user?.name ||
+            props.message.user?.username ||
+            props.message.user?.id
+          }
           className="mr-2"
           radius="xl"
         />
@@ -101,10 +105,10 @@ export default function ChatMessage(props: {
         <div className="flex w-full items-center justify-between">
           <div className="flex items-center">
             <Text size="sm" className="px-1">
-              {props.message.user?.name}
+              {props.message.user?.username || props.message.user?.name}
             </Text>
             <Text size="xs" color="dimmed">
-              {`${props.message.createdAt.toLocaleDateString()} ${props.message.createdAt.toLocaleTimeString()}`}
+              {`${props.message.createdAt?.toString()} ${props.message.createdAt?.toString()}`}
             </Text>
           </div>
           <Paper
