@@ -23,11 +23,17 @@ import { useRouter } from "next/router";
 import TemporaryDrawer from "./Drawer";
 import ChatLayout from "./ChatLayout";
 
-export default function AppLayout({ children }: { children: React.ReactNode }) {
+export default function AppLayout({
+  children,
+  props,
+}: {
+  children: React.ReactNode;
+  props?: { signInOptional?: boolean };
+}) {
   const { data: session, status: sessionStatus } = useSession();
   const router = useRouter();
 
-  if (sessionStatus === "unauthenticated") {
+  if (sessionStatus === "unauthenticated" && !props?.signInOptional) {
     signIn().catch((err) => console.log(err));
   }
 
@@ -47,7 +53,7 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
 
   return (
     <Container fluid className="p-10">
-      {sessionStatus === "authenticated" ? (
+      {sessionStatus === "authenticated" || props?.signInOptional ? (
         <>
           <AppBar component="nav">
             <Toolbar className="justify-between">

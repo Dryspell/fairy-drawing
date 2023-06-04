@@ -15,7 +15,7 @@ import {
   TARGET_COLLISION_DISTANCE,
 } from "./boidsUtils";
 import { faker } from "@faker-js/faker";
-import type { Boid, StageBoundaries } from "./boidTypes";
+import type { Automata, StageBoundaries } from "../automataTypes";
 
 export const initialBoidState = (
   id: string | number,
@@ -29,6 +29,7 @@ export const initialBoidState = (
     name: faker.name.firstName(),
     x: randomXPos(boundaries),
     y: randomYPos(boundaries),
+    shape: "wedge",
     rotation: computeRotation(initialDirection),
     direction: initialDirection,
     speed: 1,
@@ -56,18 +57,18 @@ export const initialBoidState = (
   };
 
   const { torusClone, torusTarget } = computeTorusPositions(
-    initialPosition as Boid,
+    initialPosition as Automata,
     boundaries
   );
 
   initialPosition.torusClone = torusClone;
   initialPosition.torusTarget = torusTarget;
 
-  return initialPosition as Boid;
+  return initialPosition as Automata;
 };
 
 export function updateBoidState(
-  boidState: Boid,
+  boidState: Automata,
   delta: number,
   boundaries: { x0: number; x1: number; y0: number; y1: number }
 ) {

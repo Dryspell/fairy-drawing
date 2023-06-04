@@ -1,13 +1,16 @@
 import React, { useEffect } from "react";
-import { BoidKonva } from "./Boid";
+import { AKonva } from "./AKonva";
 import Konva from "konva";
 import { useFrameTime } from "../../../lib/hooks/useFrameTime";
-import { initialBoidState, updateBoidState } from "../../../lib/boidState";
-import type { Boid } from "../../../lib/boidTypes";
+import {
+  initialBoidState,
+  updateBoidState,
+} from "../../../lib/boids/boidState";
+import type { Automata } from "../../../lib/automataTypes";
 
 export const IndividualBoid = () => {
   console.log("Boid Rendered");
-  const [boidState, setBoidState] = React.useState<Boid>(
+  const [boidState, setBoidState] = React.useState<Automata>(
     initialBoidState(1, { x0: 0, x1: 500, y0: 0, y1: 500 })
   );
 
@@ -34,9 +37,9 @@ export const IndividualBoid = () => {
 
   return (
     <>
-      <BoidKonva
+      <AKonva
         key={boidState.name}
-        boidState={boidState}
+        aState={boidState}
         helperOptions={{
           showShortestDistanceLines: true,
           showTarget: true,

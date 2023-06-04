@@ -1,15 +1,34 @@
 import dynamic from "next/dynamic";
 import React, { useContext, useState } from "react";
-import { useBoidFlock } from "../../../lib/hooks/useBoidFlock";
-import type { GameStageProps } from "../Boids/GameStage";
-import { BoidsMetaStateContext } from "../Layout/GameRoomContext";
+import { useAutomataState } from "../../../lib/hooks/useAutomataState";
+import { AMetaStateContext } from "../Layout/AutomataContext";
+import { type StageBoundaries } from "../../../lib/automataTypes";
+import { type AutomataStageProps } from "./AutomataStage";
 
-const BoidsNoSSR = dynamic<GameStageProps>(import("../Boids/GameStage"), {
+export const BOARD_PADDING = 50;
+
+export const COLUMN_COUNT = (
+  boundaries: StageBoundaries,
+  padding = BOARD_PADDING,
+  radius = 20
+) =>
+  Math.floor((boundaries.x1 - boundaries.x0 - 2 * padding) / (2 * radius + 5)) -
+  1;
+
+export const ROW_COUNT = (
+  boundaries: StageBoundaries,
+  padding: number,
+  radius: number
+) =>
+  Math.floor((boundaries.y1 - boundaries.y0 - 2 * padding) / (2 * radius + 5)) -
+  1;
+
+const AutomataNoSSR = dynamic<AutomataStageProps>(import("./AutomataStage"), {
   loading: () => (
     <>
       <div className="flex h-full w-full items-center justify-center">
         <h1 className="text-center text-2xl font-semibold text-blue-500">
-          Loading Boids ....
+          Loading Automata ....
         </h1>
       </div>
     </>
@@ -19,12 +38,11 @@ const BoidsNoSSR = dynamic<GameStageProps>(import("../Boids/GameStage"), {
 
 const INITIAL_STAGE_DIM = 1000;
 
-export default function GameRoom() {
+export default function Board() {
   // console.log("GameRoom Rendered");
 
-  const { frameTime, boidsDisplayOptions, boidsTextOptions } = useContext(
-    BoidsMetaStateContext
-  );
+  const { frameTime, aDisplayOptions, aTextOptions } =
+    useContext(AMetaStateContext);
 
   const initialStageBoundaries = {
     x0: 0,
@@ -38,13 +56,13 @@ export default function GameRoom() {
   }
 
   const [stageBoundaries, setStageBoundaries] = React.useState(
-    initialStageBoundaries
+    initialStageBoundaries as StageBoundaries
   );
 
-  const flockState = useBoidFlock(
+  const gameState = useAutomataState(
     {
-      count: 10,
-      behavior: "seekTarget",
+      count: 100,
+      behavior: "GameOfLife",
     },
     frameTime,
     stageBoundaries
@@ -88,21 +106,21 @@ export default function GameRoom() {
 
       {!loading && valid && (
         <>
-          <BoidsNoSSR
+          <AutomataNoSSR
             stageBoundaries={stageBoundaries}
             setStageBoundaries={setStageBoundaries}
-            gameState={flockState}
+            gameState={gameState}
             helperOptions={{
-              showShortestDistanceLines: boidsDisplayOptions.includes(
+              showShortestDistanceLines: aDisplayOptions.includes(
                 "showShortestDistanceLines"
               ),
-              showTarget: boidsDisplayOptions.includes("showTarget"),
+              showTarget: aDisplayOptions.includes("showTarget"),
             }}
             textOptions={{
-              show: boidsTextOptions.includes("showText"),
-              showAngles: boidsTextOptions.includes("showAngles"),
-              showNames: boidsTextOptions.includes("showNames"),
-              showScores: boidsTextOptions.includes("showScores"),
+              show: aTextOptions.includes("showText"),
+              showAngles: aTextOptions.includes("showAngles"),
+              showNames: aTextOptions.includes("showNames"),
+              showScores: aTextOptions.includes("showScores"),
             }}
           />
         </>

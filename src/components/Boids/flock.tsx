@@ -1,18 +1,18 @@
 import React from "react";
-import { BoidKonva } from "./Boid";
+import { AKonva } from "./AKonva";
 import type { useBoidFlock } from "../../../lib/hooks/useBoidFlock";
 
 export const Flock = (props: {
   flockState: ReturnType<typeof useBoidFlock>;
-  helperOptions: Parameters<typeof BoidKonva>[0]["helperOptions"];
-  textOptions: Parameters<typeof BoidKonva>[0]["textOptions"];
+  helperOptions: Parameters<typeof AKonva>[0]["helperOptions"];
+  textOptions: Parameters<typeof AKonva>[0]["textOptions"];
 }) => {
   return (
     <>
       {props.flockState.map((boid, index) => (
-        <BoidKonva
+        <AKonva
           key={index}
-          boidState={boid}
+          aState={boid}
           helperOptions={props.helperOptions}
           textOptions={props.textOptions}
         />

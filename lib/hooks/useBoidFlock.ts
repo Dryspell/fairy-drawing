@@ -1,7 +1,7 @@
-import { initialBoidState, updateBoidState } from "../boidState";
+import { initialBoidState, updateBoidState } from "../boids/boidState";
 import React, { useEffect } from "react";
 import type { useFrameTime } from "./useFrameTime";
-import type { StageBoundaries } from "../boidTypes";
+import type { StageBoundaries } from "../automataTypes";
 
 export type FlockProps = {
   count: number;
