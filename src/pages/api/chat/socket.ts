@@ -4,7 +4,7 @@ import type { ServerOptions } from "socket.io";
 import type {
   ClientToServerEvents,
   InterServerEvents,
-  MessageData,
+  Message,
   NextApiResponseWithSocket,
   ServerToClientEvents,
 } from "../../../../lib/Chat/types";
@@ -25,7 +25,7 @@ export default function SocketHandler(
     ClientToServerEvents,
     ServerToClientEvents,
     InterServerEvents,
-    MessageData
+    Message
   >(res.socket.server as Partial<ServerOptions>);
 
   res.socket.server.io = io;

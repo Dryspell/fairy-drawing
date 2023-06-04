@@ -22,6 +22,10 @@ export const serverSchema = z.object({
   DISCORD_CLIENT_ID: z.string(),
   DISCORD_CLIENT_SECRET: z.string(),
   OPEN_AI_KEY: z.string(),
+  PUSHER_APP_ID: z.string(),
+  PUSHER_APP_KEY: z.string(),
+  PUSHER_APP_SECRET: z.string(),
+  PUSHER_APP_CLUSTER: z.string(),
 });
 
 /**
@@ -37,6 +41,10 @@ export const serverEnv = {
   DISCORD_CLIENT_ID: process.env.DISCORD_CLIENT_ID,
   DISCORD_CLIENT_SECRET: process.env.DISCORD_CLIENT_SECRET,
   OPEN_AI_KEY: process.env.OPEN_AI_KEY,
+  PUSHER_APP_ID: process.env.PUSHER_APP_ID,
+  PUSHER_APP_KEY: process.env.PUSHER_APP_KEY,
+  PUSHER_APP_SECRET: process.env.PUSHER_APP_SECRET,
+  PUSHER_APP_CLUSTER: process.env.PUSHER_APP_CLUSTER,
 };
 
 /**

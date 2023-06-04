@@ -8,18 +8,18 @@ import AddReactionIcon from "@mui/icons-material/AddReaction";
 import { Remark } from "react-remark";
 import { faker } from "@faker-js/faker";
 import { useSession } from "next-auth/react";
-import type { MessageData } from "../../../lib/Chat/types";
+import { Message, User } from "@prisma/client";
 
 const DEFAULT_REPLIES_TO_SHOW = 1;
 
 export default function ChatMessage(props: {
-  message: MessageData;
-  messages: MessageData[];
-  setMessages: React.Dispatch<React.SetStateAction<MessageData[]>>;
+  message: Message & { replies?: Message[]; user?: User };
+  messages: Message[];
+  setMessages: React.Dispatch<React.SetStateAction<Message[]>>;
 }) {
   const { data: session } = useSession();
 
-  const { author, text, messageId, roomId, postedAt, replies } = props.message;
+  const { text, messageId, roomId } = props.message;
 
   const [isHovering, setIsHovering] = React.useState(false);
   const [showReplyInputField, setShowReplyInputField] = React.useState(false);
@@ -32,20 +32,20 @@ export default function ChatMessage(props: {
         return {
           ...message,
           replies: [
-            ...message.replies,
+            ...(props.message.replies || []),
             {
               messageId: faker.datatype.uuid(),
               roomId: roomId,
               text: reply,
-              author: {
+              user: {
                 username:
                   session?.user?.name || session?.user?.email || "Anonymous",
                 name:
                   session?.user?.name || session?.user?.email || "Anonymous",
                 image: session?.user?.image || "",
               },
-              postedAt: new Date().toLocaleDateString(),
-              replies: [] as MessageData[],
+              postedAt: new Date(Date.now()).toLocaleDateString(),
+              replies: [] as Message[],
             },
           ],
         };
@@ -86,8 +86,8 @@ export default function ChatMessage(props: {
     >
       <div className="relative flex-shrink-0">
         <Avatar
-          src={author.image}
-          alt={author.username}
+          src={props.message.user?.image}
+          alt={props.message.user?.name || props.message.user?.id}
           className="mr-2"
           radius="xl"
         />
@@ -96,10 +96,10 @@ export default function ChatMessage(props: {
         <div className="flex w-full items-center justify-between">
           <div className="flex items-center">
             <Text size="sm" className="px-1">
-              {author.name}
+              {props.message.user?.name}
             </Text>
             <Text size="xs" color="dimmed">
-              {postedAt}
+              {`${props.message.createdAt.toLocaleDateString()} ${props.message.createdAt.toLocaleTimeString()}`}
             </Text>
           </div>
           <Paper
@@ -139,11 +139,13 @@ export default function ChatMessage(props: {
             <TextField
               className="mt-2"
               id="reply-input"
-              label={`Reply to ${author.name}`}
+              label={`Reply to ${props.message.user?.name || "UNKNOWN"}`}
               fullWidth
               multiline
               maxRows={4}
-              placeholder={`Reply to ${author.name}...`}
+              placeholder={`Reply to ${
+                props.message.user?.name || "UNKNOWN"
+              }...`}
               onChange={(e) => setReply(e.target.value)}
               onKeyDown={(e) => {
                 if (e.key === "Enter" && !e.shiftKey) {
@@ -153,24 +155,26 @@ export default function ChatMessage(props: {
               }}
             />
           )}
-          {(replies.length && (
+          {(props.message.replies?.length && (
             <ul className="pl-8">
-              {replies.slice(0, DEFAULT_REPLIES_TO_SHOW).map((reply, index) => (
-                <ChatMessage
-                  key={index}
-                  message={reply}
-                  messages={props.messages}
-                  setMessages={props.setMessages}
-                />
-              ))}
+              {props.message.replies
+                .slice(0, DEFAULT_REPLIES_TO_SHOW)
+                .map((reply, index) => (
+                  <ChatMessage
+                    key={index}
+                    message={reply}
+                    messages={props.messages}
+                    setMessages={props.setMessages}
+                  />
+                ))}
             </ul>
           )) ||
             null}
-          {replies.length > DEFAULT_REPLIES_TO_SHOW && (
+          {(props.message.replies?.length || 0) > DEFAULT_REPLIES_TO_SHOW && (
             <>
               {!isHovering && (
                 <Typography className="absolute right-10 items-center justify-center">{`${
-                  replies.length - DEFAULT_REPLIES_TO_SHOW
+                  (props.message.replies?.length || 0) - DEFAULT_REPLIES_TO_SHOW
                 } more replies...`}</Typography>
               )}
               <Transition
@@ -185,7 +189,7 @@ export default function ChatMessage(props: {
                 leaveTo="opacity-0 max-h-0"
               >
                 <ul className="pl-8">
-                  {replies
+                  {(props.message.replies || [])
                     .slice(DEFAULT_REPLIES_TO_SHOW)
                     .map((reply, index) => (
                       <ChatMessage

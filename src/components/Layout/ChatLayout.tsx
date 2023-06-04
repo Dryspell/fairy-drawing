@@ -1,20 +1,20 @@
 import type { Socket } from "socket.io-client";
 import type {
   ClientToServerEvents,
-  MessageData,
   ServerToClientEvents,
 } from "../../../lib/Chat/types";
 import { InitializeChatSocket } from "../../../lib/Chat/socketFunctions";
 import React from "react";
 import { useRouter } from "next/router";
 import { faker } from "@faker-js/faker";
+import { Message } from "@prisma/client";
 
 export const ChatContext = React.createContext({
   socket: null as Socket<ServerToClientEvents, ClientToServerEvents> | null,
   roomId: "",
-  messages: [] as MessageData[],
+  messages: [] as Message[],
   setMessages: (() => void 0) as React.Dispatch<
-    React.SetStateAction<MessageData[]>
+    React.SetStateAction<Message[]>
   >,
 });
 
@@ -28,7 +28,7 @@ export default function ChatLayout({
     ServerToClientEvents,
     ClientToServerEvents
   > | null>(null);
-  const [messages, setMessages] = React.useState<MessageData[]>([]);
+  const [messages, setMessages] = React.useState<Message[]>([]);
 
   const chatRoomId = router.query.chatId || faker.word.noun();
 

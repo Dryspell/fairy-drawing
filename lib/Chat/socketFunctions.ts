@@ -1,16 +1,11 @@
 import io from "socket.io-client";
 import type { Socket } from "socket.io-client";
-import type {
-  ClientToServerEvents,
-  MessageData,
-  ServerToClientEvents,
-} from "./types";
-import { faker } from "@faker-js/faker";
-import type { User } from "@prisma/client";
+import type { ClientToServerEvents, ServerToClientEvents } from "./types";
+import type { Message } from "@prisma/client";
 
 export async function InitializeChatSocket(
   chatRoomId: string,
-  setMessages: React.Dispatch<React.SetStateAction<MessageData[]>>,
+  setMessages: React.Dispatch<React.SetStateAction<Message[]>>,
   setSocket: React.Dispatch<
     React.SetStateAction<Socket<
       ServerToClientEvents,
@@ -37,7 +32,7 @@ export async function InitializeChatSocket(
 
 export function socketSubmitMessage(
   socket: Socket<ServerToClientEvents, ClientToServerEvents> | null,
-  message: MessageData
+  message: Message
 ) {
   if (!socket) {
     console.log("socket not initialized");
@@ -54,44 +49,3 @@ const origin = () =>
   typeof window !== "undefined"
     ? window.location.origin
     : "http://localhost:3000";
-
-export const createMessageFromPlainText = (
-  input:
-    | "test"
-    | {
-        text: string;
-        roomId: string;
-        username?: string;
-        name?: string;
-        user?: User | null;
-      }
-): MessageData => {
-  if (input === "test") {
-    return {
-      messageId: faker.datatype.uuid(),
-      roomId: faker.datatype.uuid(),
-      author: {
-        image: faker.internet.avatar(),
-        name: faker.internet.userName(),
-        username: faker.internet.email(),
-      },
-      postedAt: `${Math.floor(Math.random() * 60)} minutes ago`,
-      text: faker.lorem.paragraph(),
-      replies: [],
-    };
-  }
-
-  const message: MessageData = {
-    messageId: faker.datatype.uuid(),
-    roomId: String(input.roomId),
-    text: input.text,
-    author: {
-      username: input.user?.email || input.username || "Anonymous",
-      name: input.user?.name || input.name || input.username || "Anonymous",
-      image: faker.internet.avatar() || "",
-    },
-    postedAt: new Date().toLocaleDateString(),
-    replies: [],
-  };
-  return message;
-};

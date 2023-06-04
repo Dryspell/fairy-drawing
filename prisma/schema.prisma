@@ -5,6 +5,10 @@ generator client {
   provider = "prisma-client-js"
 }
 
+generator zod {
+  provider = "zod-prisma-types"
+}
+
 datasource db {
   provider = "sqlite"
   // NOTE: When using postgresql, mysql or sqlserver, uncomment the @db.Text annotations in model Account below
@@ -52,11 +56,16 @@ model User {
   name          String?
   email         String?    @unique
   emailVerified DateTime?
+  username      String?    @unique
   image         String?
   accounts      Account[]
   sessions      Session[]
   messages      Message[]
   Reaction      Reaction[]
+  rooms         Room[]     @relation("RoomToUser")
+  createdAt     DateTime   @default(now())
+  updatedAt     DateTime   @updatedAt
+  seenMessages  Message[]  @relation("MessageSeenBy")
 }
 
 model VerificationToken {
@@ -68,11 +77,14 @@ model VerificationToken {
 }
 
 model Room {
-  id        String    @id @default(cuid())
-  name      String
-  createdAt DateTime  @default(now())
-  updatedAt DateTime  @updatedAt
-  messages  Message[]
+  id            String    @id @default(cuid())
+  roomId        String    @unique
+  name          String
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+  lastMessageAt DateTime?
+  users         User[]    @relation("RoomToUser")
+  messages      Message[] @relation("RoomToMessage")
 }
 
 model Message {
@@ -83,11 +95,12 @@ model Message {
   user      User       @relation(fields: [userId], references: [id])
   userId    String
   roomId    String
-  room      Room       @relation(fields: [roomId], references: [id])
+  room      Room       @relation("RoomToMessage", fields: [roomId], references: [roomId])
   replies   Message[]  @relation("MessageToMessage")
-  replyTo   Message?   @relation("MessageToMessage", fields: [replyToId], references: [messageId])
   replyToId String?
+  replyTo   Message?   @relation("MessageToMessage", fields: [replyToId], references: [messageId])
   reactions Reaction[]
+  seenBy    User[]     @relation("MessageSeenBy")
 }
 
 model Reaction {
