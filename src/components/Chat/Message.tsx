@@ -108,7 +108,11 @@ export default function ChatMessage(props: {
               {props.message.user?.username || props.message.user?.name}
             </Text>
             <Text size="xs" color="dimmed">
-              {`${props.message.createdAt?.toString()} ${props.message.createdAt?.toString()}`}
+              {props.message.updatedAt &&
+              props.message.updatedAt.toString() !==
+                props.message.createdAt.toString()
+                ? `updated: ${props.message.updatedAt?.toString()}`
+                : props.message.createdAt.toString()}
             </Text>
           </div>
           <Paper

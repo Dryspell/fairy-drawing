@@ -8,15 +8,31 @@ import { ChatContext } from "../Layout/ChatLayout";
 // import { socketSubmitMessage } from "../../../lib/Chat/socketFunctions";
 import type { Message, User } from "@prisma/client";
 import { createMessageFromPlainText } from "../../../lib/Chat/utils";
+import { api } from "../../utils/api";
 
 // const mode = "test";
 export const mode: "test" | "normal" | "admin" = "normal";
 
+export function getServerSideProps() {
+  return {
+    props: {
+      initialMessages: Array.from({ length: 10 }).map(() =>
+        createMessageFromPlainText("test")
+      ),
+    },
+  };
+}
+
 export default function ChatBox(props: { initialMessages?: Message[] }) {
   const viewport = useRef<HTMLDivElement>(null);
   const { data: session } = useSession();
+  const [user, setUser] = useState<Partial<User> | null>(
+    (session?.user as User) || null
+  );
   const {
     // socket,
+    // session,
+    // user,
     roomId,
     messages,
     setMessages,
@@ -24,13 +40,53 @@ export default function ChatBox(props: { initialMessages?: Message[] }) {
 
   const [chatText, setChatText] = useState("");
 
+  const { mutate: createOrUpdateMessage } =
+    api.chat.createOrUpdateMessage.useMutation({
+      onMutate: ({ message }) => {
+        // Optimistic Update
+        !messages.find((m) => m.messageId === message.messageId) &&
+          setMessages([...messages, message]);
+      },
+
+      onSuccess: ({ updatedMessage, updatedConversation }) => {
+        if (!updatedConversation) return;
+
+        setUser(updatedMessage.user);
+
+        console.log(
+          `Created Message: ${
+            updatedConversation.messages.at(-1)?.text || "Unknown Message"
+          } in Room ${updatedConversation.id}`
+        );
+        updatedConversation.messages &&
+          setMessages(updatedConversation.messages);
+      },
+    });
+
+  const { mutate: seen } = api.chat.seen.useMutation();
+
+  const handleReceiveMessage = (message: Message) => {
+    if (!messages.find((m) => m.messageId === message.messageId)) {
+      console.log(`Received new message: ${message.text}`);
+      setMessages([...messages, message]);
+      seen({
+        messageId: message.messageId,
+        username: session?.user?.name || "Anonymous",
+      });
+    }
+  };
+
   const handleChatSubmit = () => {
-    const message = createMessageFromPlainText({
+    const {
+      user: newUser,
+      replies,
+      ...message
+    } = createMessageFromPlainText({
       text: chatText,
       roomId,
-      user: session?.user as User,
+      user: user || (session?.user as User),
     });
-    setMessages((pre) => [...pre, message]);
+    createOrUpdateMessage({ message });
     // socketSubmitMessage(socket, message);
     setChatText("");
     scrollToBottom();
@@ -45,13 +101,13 @@ export default function ChatBox(props: { initialMessages?: Message[] }) {
   useEffect(() => {
     scrollToBottom();
 
-    mode === "test" &&
-      !props?.initialMessages?.length &&
-      setMessages(
-        Array.from({ length: 10 }).map(() => createMessageFromPlainText("test"))
-      );
+    // mode === "test" &&
+    //   !props?.initialMessages?.length &&
+    //   setMessages(
+    //     Array.from({ length: 10 }).map(() => createMessageFromPlainText("test"))
+    //   );
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [props?.initialMessages?.length, roomId]);
+  }, [messages.length, roomId]);
 
   return (
     <div className="mt-0">

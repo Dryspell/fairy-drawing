@@ -7,10 +7,14 @@
 import React from "react";
 import { useRouter } from "next/router";
 import { faker } from "@faker-js/faker";
-import { type Message } from "@prisma/client";
+import { type Room, User, type Message } from "@prisma/client";
+import { api } from "../../utils/api";
+import { getSession, useSession } from "next-auth/react";
 
 export const ChatContext = React.createContext({
   // socket: null as Socket<ServerToClientEvents, ClientToServerEvents> | null,
+  session: null as Awaited<ReturnType<typeof getSession>> | null,
+  // user: null as Partial<User> | null,
   roomId: "",
   messages: [] as Message[],
   setMessages: (() => void 0) as React.Dispatch<
@@ -28,15 +32,26 @@ export default function ChatLayout({
   //   ServerToClientEvents,
   //   ClientToServerEvents
   // > | null>(null);
+  const { data: session } = useSession({
+    required: false,
+  });
+  // const [user, setUser] = React.useState<Partial<User> | null>(
+  //   (session?.user as User) || null
+  // );
+
   const [messages, setMessages] = React.useState<Message[]>([]);
 
-  const chatRoomId = router.query.chatId || faker.word.noun();
-  if (!router.query.chatId) {
+  const [roomId, setRoomId] = React.useState(
+    (router.query.roomId && String(router.query.roomId)) || faker.word.noun()
+  );
+
+  if (!router.query.roomId && roomId !== router.query.roomId) {
+    console.log({ roomId: router.query.roomId });
     router
       .replace(
         {
           pathname: router.pathname,
-          query: { ...router.query, chatId: chatRoomId },
+          query: { ...router.query, roomId },
         },
         undefined,
         {
@@ -45,6 +60,22 @@ export default function ChatLayout({
       )
       .catch((e) => console.log(e));
   }
+
+  const [room, setRoom] = React.useState<Room | null>(null);
+  const { isLoading: roomLoading } = api.chat.getOrCreateRoom.useQuery(
+    { roomId: roomId },
+    {
+      enabled: Boolean(router.query.roomId),
+      onSuccess: (newRoom) => {
+        // if (room) router.query = { ...router.query, roomId: room.id };
+        newRoom && newRoom.id !== room?.id && setRoom(newRoom);
+        newRoom?.messages && setMessages(newRoom.messages);
+        // router.push(router.query, undefined, { shallow: true }).catch((err) => {
+        //   console.log(err);
+        // });
+      },
+    }
+  );
 
   // .push(`?chatId=${String(chatRoomId)}`, undefined, {
   //   shallow: true,
@@ -70,7 +101,9 @@ export default function ChatLayout({
     <ChatContext.Provider
       value={{
         // socket,
-        roomId: String(chatRoomId),
+        session,
+        // user,
+        roomId: String(roomId),
         messages,
         setMessages,
       }}

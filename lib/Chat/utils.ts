@@ -12,7 +12,7 @@ export const createMessageFromPlainText = (
         name?: string;
         user?: Partial<User>;
       }
-): Message & { user?: Partial<User>; replies: Message[] } => {
+): Message & { user?: Partial<User>; replies?: Message[] } => {
   const defaultMessage = (userId = faker.datatype.uuid()) => {
     return {
       messageId: cuid(),
