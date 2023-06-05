@@ -17,7 +17,7 @@ export function getServerSideProps() {
   return {
     props: {
       initialMessages: Array.from({ length: 10 }).map(() =>
-        createMessageFromPlainText("test")
+        createMessageFromPlainText({})
       ),
     },
   };

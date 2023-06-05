@@ -2,22 +2,16 @@ import { type Message, type User } from "@prisma/client";
 import { faker } from "@faker-js/faker";
 import cuid from "cuid";
 
-export const createMessageFromPlainText = (
-  input:
-    | "test"
-    | {
-        text: string;
-        roomId: string;
-        username?: string;
-        name?: string;
-        user?: Partial<User>;
-      }
-): Message & { user?: Partial<User>; replies?: Message[] } => {
-  const defaultMessage = (userId = faker.datatype.uuid()) => {
+export const createMessageFromPlainText = (input: {
+  text?: string;
+  roomId?: string;
+  user?: Partial<User>;
+}): Message & { user?: Partial<User>; replies?: Message[] } => {
+  const defaultMessage = (userId?: string) => {
     return {
       messageId: cuid(),
-      roomId: faker.datatype.uuid(),
-      userId,
+      roomId: cuid(),
+      userId: cuid(),
       user: {
         id: userId,
         email: faker.internet.email(),
@@ -27,29 +21,15 @@ export const createMessageFromPlainText = (
         username: faker.internet.email(),
         createdAt: new Date(Date.now()),
         updatedAt: new Date(Date.now()),
+        ...input.user,
       },
       createdAt: new Date(Date.now()),
       updatedAt: new Date(Date.now()),
-      text: faker.lorem.paragraph(),
+      text: input.text || faker.lorem.paragraph(),
       replies: [],
       replyToId: null,
     };
   };
 
-  if (input === "test") return defaultMessage();
-
-  // const message = {
-  //   messageId: faker.datatype.uuid(),
-  //   roomId: String(input.roomId),
-  //   text: input.text,
-  //   user: {
-  //     id: input.user?.id || faker.datatype.uuid(),
-  //     username: input.user?.email || input.username || "Anonymous",
-  //     name: input.user?.name || input.name || input.username || "Anonymous",
-  //     image: faker.internet.avatar() || "",
-  //   },
-  //   createdAt: new Date().toLocaleDateString(),
-  //   replies: [],
-  // };
-  return { ...defaultMessage(input.user?.id), ...input };
+  return { ...defaultMessage(input.user?.id) };
 };
