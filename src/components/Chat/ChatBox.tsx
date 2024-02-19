@@ -44,8 +44,14 @@ export default function ChatBox(props: { initialMessages?: Message[] }) {
     api.chat.createOrUpdateMessage.useMutation({
       onMutate: ({ message }) => {
         // Optimistic Update
-        !messages.find((m) => m.messageId === message.messageId) &&
-          setMessages([...messages, message]);
+
+        let existingMessage = messages.find(
+          (m) => m.messageId === message.messageId
+        );
+        if (existingMessage) {
+          existingMessage = { ...message };
+          setMessages([...messages]);
+        } else setMessages([...messages, message]);
       },
 
       onSuccess: ({ updatedMessage, updatedConversation }) => {

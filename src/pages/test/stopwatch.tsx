@@ -24,6 +24,7 @@ export default function StopwatchPage() {
       </Head>
       <StopwatchNoSSR
         frameTime={frameTime}
+        showButton={true}
         showFrameCount={false}
         styles={{ body: styles.body, timer: styles.timer }}
       />
