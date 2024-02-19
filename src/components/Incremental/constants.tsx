@@ -30,7 +30,7 @@ export const recipes: Record<ItemType, Recipe> = {
   },
   ore: {
     type: "ore",
-    work: 20,
+    work: 10,
     costs: [],
     amount: 1,
   },

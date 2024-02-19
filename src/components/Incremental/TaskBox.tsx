@@ -18,8 +18,9 @@ const isWorking = (
 
 export const canCraft = (recipe: Recipe, inventory: Item[]) => {
   for (const cost of recipe.costs) {
-    const index = inventory.findIndex((item) => item.type === cost.type);
-    if (index === -1 || (inventory[index]?.amount ?? 0) < cost.amount) {
+    const item = inventory.find((item) => item.type === cost.type);
+    console.log({ item }, cost.amount);
+    if ((item?.amount ?? 0) < cost.amount) {
       console.log("Not enough resources");
       return false;
     }
@@ -63,7 +64,8 @@ export const addToInventory = (
   );
   if (existingItemIndex === -1) {
     console.log(`No ${type} found in inventory, adding ${amount} ${type}(s)`);
-    setInventory((prevInventory) => [...prevInventory, { type, amount }]);
+    newInventory.push({ type, amount });
+    setInventory(() => newInventory);
   } else {
     const updatedItem = { ...newInventory[existingItemIndex]! };
     updatedItem.amount += amount;
@@ -133,6 +135,7 @@ export const TaskBox = (props: {
 
   const handleToggleWork = () => {
     if (isWorking(props.work, props.task)) {
+      console.log(`Stopping ${props.task.type}`);
       props.setWork(() => ({
         action: "none",
         type: "none",
@@ -142,23 +145,35 @@ export const TaskBox = (props: {
         stop: props.frameTime.displayTime,
         timeElapsed: timeElapsed(),
       }));
+      props.frameTime.togglePause(true);
     } else if (
       !canCraft(recipes[props.task.type], props.inventory) &&
       workTime.timeElapsed <= 0
     ) {
       return;
     } else {
+      console.log(`Starting ${props.task.type}`);
       props.setWork(() => props.task);
       setWorkTime((prev) => ({
         ...prev,
         start: props.frameTime.displayTime,
       }));
+      props.frameTime.togglePause(false);
     }
-    props.frameTime.togglePause();
   };
 
   return (
-    <Box>
+    <Box
+      sx={{
+        border: isWorking(props.work, props.task)
+          ? {
+              borderColor: "secondary",
+              borderStyle: "solid",
+              borderWidth: 1,
+            }
+          : undefined,
+      }}
+    >
       <Button onClick={handleToggleWork}>
         {`${
           itemsDict.find((item) => item.type === props.task.type)?.icon ||
@@ -171,7 +186,9 @@ export const TaskBox = (props: {
       {showStartStopTime ? (
         <Box>
           <Typography variant="caption">
-            {`Start: ${workTime.start} Elapsed: ${timeElapsed()}`}
+            {`DisplayTime: ${props.frameTime.displayTime} Start: ${
+              workTime.start
+            } Elapsed: ${timeElapsed()}`}
           </Typography>
         </Box>
       ) : null}

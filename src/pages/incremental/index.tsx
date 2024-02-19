@@ -21,17 +21,17 @@ import { TaskBox } from "../../components/Incremental/TaskBox";
 export default function IncrementalGamePage() {
   const frameTime = useFrameTime();
   const [inventory, setInventory] = React.useState<Item[]>([
-    {
-      type: "wood",
-      amount: 1,
-    },
+    // {
+    //   type: "wood",
+    //   amount: 1,
+    // },
   ]);
   const [work, setWork] = React.useState<{
     action: keyof typeof jobs;
     type: ItemType;
   }>({
-    action: "mining",
-    type: "ore",
+    action: "none",
+    type: "none",
   } as const);
 
   return (
