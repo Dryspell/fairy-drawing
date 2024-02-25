@@ -8,8 +8,10 @@ export const useFrameTime = () => {
   const displayTime = pause.paused ? pause.pauseTime : frameTime - startTime;
   const [frames, setFrames] = React.useState({ last: 0, current: 0 });
 
-  const togglePause = (toggle?:boolean) => {
-    if (!pause.paused || toggle) setPause({ paused: true, pauseTime: displayTime });
+  const togglePause = (toggle?: boolean) => {
+    if (toggle === pause.paused) return;
+    if (!pause.paused || toggle)
+      setPause({ paused: true, pauseTime: displayTime });
     else {
       setStartTime(frameTime - pause.pauseTime);
       setPause({ paused: false, pauseTime: 0 });

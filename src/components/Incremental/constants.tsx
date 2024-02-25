@@ -11,6 +11,7 @@ export const itemsDict = [
 
 export type Recipe = {
   type: ItemType;
+  jobType: keyof typeof jobs;
   work: number;
   costs: { type: ItemType; amount: number }[];
   amount: number;
@@ -18,30 +19,35 @@ export type Recipe = {
 export const recipes: Record<ItemType, Recipe> = {
   none: {
     type: "none",
+    jobType: "none",
     work: 0,
     costs: [],
     amount: 0,
   },
   wood: {
     type: "wood",
+    jobType: "woocutting",
     work: 10,
     costs: [],
     amount: 1,
   },
   ore: {
     type: "ore",
+    jobType: "mining",
     work: 10,
     costs: [],
     amount: 1,
   },
   ingot: {
     type: "ingot",
+    jobType: "smithing",
     work: 60,
     costs: [{ type: "ore", amount: 2 }],
     amount: 1,
   },
   sword: {
     type: "sword",
+    jobType: "smithing",
     work: 400,
     costs: [
       { type: "ingot", amount: 3 },
@@ -65,9 +71,9 @@ export const jobs = {
     production: ["ore"],
   },
   smithing: {
-    production: ["ingot"],
+    production: ["ingot", "sword"],
   },
   crafting: {
-    production: ["sword"],
+    production: [],
   },
 } as const;

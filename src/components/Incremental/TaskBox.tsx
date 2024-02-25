@@ -3,169 +3,51 @@ import type { useFrameTime } from "../../../lib/hooks/useFrameTime";
 import { LinearProgressWithLabel } from "../../components/Material/LinearProgressWithLabel";
 import Box from "@mui/material/Box";
 import Button from "@mui/material/Button";
-import type { Item, ItemType, jobs, Recipe } from "./constants";
+import type { Item } from "./constants";
 import { itemsDict } from "./constants";
 import { recipes } from "./constants";
 import Typography from "@mui/material/Typography";
-import { LuSword } from "react-icons/lu";
+import type { InventoryAction, Work, WorkTime } from "./utils";
+import { isWorkingThisTask, timeElapsed, workProgress } from "./utils";
 
-const isWorking = (
-  work: { action: keyof typeof jobs; type: ItemType },
-  task: { action: keyof typeof jobs; type: ItemType }
-) => {
-  return work.action === task.action && work.type === task.type;
-};
-
-export const canCraft = (recipe: Recipe, inventory: Item[]) => {
-  for (const cost of recipe.costs) {
-    const item = inventory.find((item) => item.type === cost.type);
-    console.log({ item }, cost.amount);
-    if ((item?.amount ?? 0) < cost.amount) {
-      console.log("Not enough resources");
-      return false;
-    }
-  }
-  return true;
-};
-
-export const beginCraft = (
-  recipe: Recipe,
-  inventory: Item[],
-  setInventory: React.Dispatch<React.SetStateAction<Item[]>>
-) => {
-  const newInventory = [...inventory];
-  for (const cost of recipe.costs) {
-    const itemToReduceIndex = newInventory.findIndex(
-      (item) => item.type === cost.type
-    );
-    if (
-      itemToReduceIndex === -1 ||
-      (newInventory[itemToReduceIndex]?.amount ?? 0) < cost.amount
-    ) {
-      throw new Error("Not enough resources");
-    } else {
-      const updatedItem = { ...newInventory[itemToReduceIndex]! };
-      updatedItem.amount -= cost.amount;
-      newInventory[itemToReduceIndex] = updatedItem;
-    }
-  }
-  setInventory(() => newInventory);
-};
-
-export const addToInventory = (
-  type: ItemType,
-  amount: number,
-  inventory: Item[],
-  setInventory: React.Dispatch<React.SetStateAction<Item[]>>
-) => {
-  const newInventory = [...inventory];
-  const existingItemIndex = newInventory.findIndex(
-    (item) => item.type === type
-  );
-  if (existingItemIndex === -1) {
-    console.log(`No ${type} found in inventory, adding ${amount} ${type}(s)`);
-    newInventory.push({ type, amount });
-    setInventory(() => newInventory);
-  } else {
-    const updatedItem = { ...newInventory[existingItemIndex]! };
-    updatedItem.amount += amount;
-    newInventory[existingItemIndex] = updatedItem;
-    setInventory(() => [...newInventory]);
-  }
-
-  console.log(`Added ${amount} ${type}(s) to inventory`);
-  return newInventory;
-};
-
-export const finishCraft = (
-  recipe: Recipe,
-  inventory: Item[],
-  setInventory: React.Dispatch<React.SetStateAction<Item[]>>,
-  handleToggleWork: () => void
-) => {
-  const newInventory = addToInventory(
-    recipe.type,
-    recipe.amount,
-    inventory,
-    setInventory
-  );
-  if (canCraft(recipe, newInventory)) {
-    beginCraft(recipe, newInventory, setInventory);
-  } else {
-    handleToggleWork();
-  }
-};
-
-const showStartStopTime = false;
+const showStartStopTime = true;
 
 export const TaskBox = (props: {
-  work: { action: keyof typeof jobs; type: ItemType };
-  setWork: React.Dispatch<
-    React.SetStateAction<{ action: keyof typeof jobs; type: ItemType }>
-  >;
-  frameTime: ReturnType<typeof useFrameTime>;
-  task: { action: keyof typeof jobs; type: ItemType };
+  task: Omit<Work, "isWorking">;
+  work: Work;
+  toggleWork: React.Dispatch<Work>;
+  displayTime: ReturnType<typeof useFrameTime>["displayTime"];
+  workTime: WorkTime;
   inventory: Item[];
-  setInventory: React.Dispatch<React.SetStateAction<Item[]>>;
+  dispatchInventoryAction: React.Dispatch<InventoryAction>;
 }) => {
-  const [workTime, setWorkTime] = React.useState({
-    start: 0,
-    timeElapsed: 0,
-  });
-
-  const timeElapsed = () =>
-    isWorking(props.work, props.task)
-      ? props.frameTime.displayTime - workTime.start + workTime.timeElapsed
-      : workTime.timeElapsed;
+  const {
+    task,
+    work,
+    toggleWork,
+    displayTime,
+    workTime,
+    inventory,
+    dispatchInventoryAction,
+  } = props;
 
   React.useEffect(() => {
-    if (Math.ceil(timeElapsed() / recipes[props.task.type].work) >= 100) {
-      finishCraft(
-        recipes[props.task.type],
-        props.inventory,
-        props.setInventory,
-        handleToggleWork
-      );
-      setWorkTime((prev) => ({
-        ...prev,
-        timeElapsed: prev.timeElapsed - 100 * recipes[props.task.type].work,
-      }));
-    }
-  }, [props.frameTime.displayTime]);
-
-  const handleToggleWork = () => {
-    if (isWorking(props.work, props.task)) {
-      console.log(`Stopping ${props.task.type}`);
-      props.setWork(() => ({
-        action: "none",
-        type: "none",
-      }));
-      setWorkTime((prev) => ({
-        ...prev,
-        stop: props.frameTime.displayTime,
-        timeElapsed: timeElapsed(),
-      }));
-      props.frameTime.togglePause(true);
-    } else if (
-      !canCraft(recipes[props.task.type], props.inventory) &&
-      workTime.timeElapsed <= 0
+    if (
+      Math.ceil(
+        timeElapsed(work, task, workTime, displayTime) / recipes[task.type].work
+      ) >= 100
     ) {
-      return;
-    } else {
-      console.log(`Starting ${props.task.type}`);
-      props.setWork(() => props.task);
-      setWorkTime((prev) => ({
-        ...prev,
-        start: props.frameTime.displayTime,
-      }));
-      props.frameTime.togglePause(false);
+      dispatchInventoryAction({
+        type: "finishCraft",
+        recipe: recipes[task.type],
+      });
     }
-  };
+  }, [displayTime]);
 
   return (
     <Box
       sx={{
-        border: isWorking(props.work, props.task)
+        border: isWorkingThisTask(work, task)
           ? {
               borderColor: "secondary",
               borderStyle: "solid",
@@ -174,26 +56,40 @@ export const TaskBox = (props: {
           : undefined,
       }}
     >
-      <Button onClick={handleToggleWork}>
+      <Button
+        onClick={() => {
+          if (isWorkingThisTask(work, task)) {
+            toggleWork(task);
+          } else
+            dispatchInventoryAction({
+              type: "beginCraft",
+              recipe: recipes[task.type],
+            });
+        }}
+      >
         {`${
-          itemsDict.find((item) => item.type === props.task.type)?.icon ||
+          itemsDict.find((item) => item.type === task.type)?.icon ||
           itemsDict[0].icon
-        } ${props.task.type}: ${
-          props.inventory.find((item) => item.type === props.task.type)
-            ?.amount || 0
+        } ${task.type}: ${
+          inventory.find((item) => item.type === task.type)?.amount || 0
         }`}
       </Button>
       {showStartStopTime ? (
         <Box>
           <Typography variant="caption">
-            {`DisplayTime: ${props.frameTime.displayTime} Start: ${
-              workTime.start
-            } Elapsed: ${timeElapsed()}`}
+            {`DisplayTime: ${displayTime.toFixed(0)} Start: ${workTime[
+              task.type
+            ].start.toFixed(0)} Elapsed: ${timeElapsed(
+              work,
+              task,
+              workTime,
+              displayTime
+            ).toFixed(0)}`}
           </Typography>
         </Box>
       ) : null}
       <LinearProgressWithLabel
-        value={Math.ceil(timeElapsed() / recipes[props.task.type].work) % 100}
+        value={workProgress(work, task, workTime, displayTime).progress % 100}
       />
     </Box>
   );
